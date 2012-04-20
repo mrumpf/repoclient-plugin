@@ -1,0 +1,8 @@
+<!--
+  This view is used to render the installed plugins page.
+-->
+<div>
+   This plugin allows you to select files from a Maven Repository Manager like
+   Artifactory or Nexus and to trigger a build step to which the selection is
+   passed as parameters.
+</div>
