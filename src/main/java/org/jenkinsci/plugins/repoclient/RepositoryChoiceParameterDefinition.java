@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins;
+package org.jenkinsci.plugins.repoclient;
 
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -25,6 +25,8 @@ public class RepositoryChoiceParameterDefinition extends
 	public RepositoryChoiceParameterDefinition(String name, String choices,
 			String description) {
 		super(name, description);
+		System.out.println("Constructor1 called");
+		(new Exception()).printStackTrace();
 		this.choices = Arrays.asList(choices.split("\\r?\\n"));
 		if (choices.length() == 0) {
 			throw new IllegalArgumentException("No choices found");
@@ -35,6 +37,7 @@ public class RepositoryChoiceParameterDefinition extends
 	public RepositoryChoiceParameterDefinition(String name, String[] choices,
 			String description) {
 		super(name, description);
+		System.out.println("Constructor2 called");
 		this.choices = new ArrayList<String>(Arrays.asList(choices));
 		if (this.choices.isEmpty()) {
 			throw new IllegalArgumentException("No choices found");
@@ -45,12 +48,14 @@ public class RepositoryChoiceParameterDefinition extends
 	private RepositoryChoiceParameterDefinition(String name, List<String> choices,
 			String defaultValue, String description) {
 		super(name, description);
+		System.out.println("Constructor3 called");
 		this.choices = choices;
 		this.defaultValue = defaultValue;
 	}
 
 	@Override
 	public ParameterDefinition copyWithDefaultValue(ParameterValue defaultValue) {
+		System.out.println("copyWithDefaultValue");
 		if (defaultValue instanceof StringParameterValue) {
 			StringParameterValue value = (StringParameterValue) defaultValue;
 			return new RepositoryChoiceParameterDefinition(getName(), choices,
@@ -62,15 +67,19 @@ public class RepositoryChoiceParameterDefinition extends
 
 	@Exported
 	public List<String> getChoices() {
+		System.out.println("Choices: " + choices);
+		(new Exception()).printStackTrace();
 		return choices;
 	}
 
 	public String getChoicesText() {
+		System.out.println("Choices Text: " + choices);
 		return StringUtils.join(choices, "\n");
 	}
 
 	@Override
 	public StringParameterValue getDefaultParameterValue() {
+		System.out.println("getDefaultParameterValue");
 		return new StringParameterValue(getName(),
 				defaultValue == null ? choices.get(0) : defaultValue,
 				getDescription());
@@ -84,6 +93,7 @@ public class RepositoryChoiceParameterDefinition extends
 
 	@Override
 	public ParameterValue createValue(StaplerRequest req, JSONObject jo) {
+		System.out.println("createValue: JSONObject: " + jo);
 		StringParameterValue value = req.bindJSON(StringParameterValue.class,
 				jo);
 		value.setDescription(getDescription());
@@ -91,6 +101,7 @@ public class RepositoryChoiceParameterDefinition extends
 	}
 
 	public StringParameterValue createValue(String value) {
+		System.out.println("createValue: value: " + value);
 		return checkValue(new StringParameterValue(getName(), value,
 				getDescription()));
 	}
@@ -99,11 +110,13 @@ public class RepositoryChoiceParameterDefinition extends
 	public static class DescriptorImpl extends ParameterDescriptor {
 		@Override
 		public String getDisplayName() {
-			return "xxx";//Messages.ChoiceParameterDefinition_DisplayName();
+			System.out.println("getDisplayName");
+			return "Maven Repository Artifact - Version List";//Messages.ChoiceParameterDefinition_DisplayName();
 		}
 
 		@Override
 		public String getHelpFile() {
+			System.out.println("getHelpFile");
 			return "/choice.html";
 		}
 	}

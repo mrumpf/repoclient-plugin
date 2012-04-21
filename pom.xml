@@ -16,6 +16,36 @@
 			<groupId>org.jenkins-ci.main</groupId>
 			<artifactId>maven-plugin</artifactId>
 		</dependency>
+        <dependency>
+           <groupId>org.restlet.jse</groupId>
+           <artifactId>org.restlet.ext.json</artifactId>
+           <version>2.0.10</version>
+        </dependency>
+        <dependency>
+           <groupId>org.restlet.jse</groupId>
+           <artifactId>org.restlet.ext.jackson</artifactId>
+           <version>2.0.10</version>
+        </dependency>
+        <dependency>
+           <groupId>org.restlet.jse</groupId>
+           <artifactId>org.restlet.ext.slf4j</artifactId>
+           <version>2.0.10</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.restlet.jse</groupId>
+            <artifactId>org.restlet</artifactId>
+            <version>2.0.10</version>
+        </dependency>
+        <dependency>
+           <groupId>org.restlet.jse</groupId>
+           <artifactId>org.restlet.ext.net</artifactId>
+           <version>2.0.10</version>
+        </dependency>
 	</dependencies>
 
 	<!-- get every artifact through maven.glassfish.org, which proxies all the 

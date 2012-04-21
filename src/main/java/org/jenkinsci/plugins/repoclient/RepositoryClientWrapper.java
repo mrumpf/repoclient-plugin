@@ -1,8 +1,10 @@
-package org.jenkinsci.plugins;
+package org.jenkinsci.plugins.repoclient;
 
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.BuildListener;
+import hudson.model.ParameterDefinition;
+import hudson.model.ParameterValue;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.tasks.BuildWrapper;

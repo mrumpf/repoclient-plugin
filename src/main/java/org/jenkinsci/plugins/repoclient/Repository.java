@@ -1,4 +1,4 @@
-package org.jenkinsci.plugins;
+package org.jenkinsci.plugins.repoclient;
 
 public class Repository {
 	private String name;
