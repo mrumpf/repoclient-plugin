@@ -1,7 +1,3 @@
-groupId
-   artifactId
-      version
-
 ######################
 ### USER INTERFACE ###
 ######################
@@ -9,51 +5,50 @@ groupId
 ### Global Configuration
 
 Define multiple Maven repositories that can be accessed by the Jenkins instance:
-1. Name
-2. Server Base URL
-3. Username
-4. Password
+1. Name: Main
+2. Server Base URL: https://www.mycompany.com/maven
+3. Username: user  (global read-only user)
+4. Password: password
 
 ### Job Configuration
 
-1. Select Maven repository, as defined in the Global Configuration
-  1. Main
-  2. https://www.mycompany.com/maven
-  3. user
-  4. password
-2. Enter one or more groupIds (seperated by comma)
+1. Check the "parameterized Build" checkbox
+2. Create a parameter (create multiple parameters for multiple artifacts)
+  Maven Repository Artifacts
+3. Select Maven repository, as defined in the Global Configuration:
+  Main
+4. Enter a groupId
   Example: com.company.product
-3. Enter a pattern which files to transfer
-  * TODO: What about include/exclude patterns 
+5. Enter a artifactId
+  Example: artifact
+6. Enter a pattern which files to transfer
   Example: *.zip
 
 ### Build Now
 
-1. Show a dropdown box with all artifactIds from the specified groupIds
-  * component1
-  * component2
+1. Show a list with all versions from the specified groupId.artifactId folder
+  * version1
+  * version2
   * ...
-  * componentN
-2. When an artifactId is selected, populate the version list
-  * 1.0.0
-  * 1.0.1
-  * ...
-3. When a version is selected, show a list of files that will be transfered (based on the pattern)
-  * abc-1.0.0.zip
-  * abc-1.0.0-source.zip
-  * abc-1.0.0-doc.zip
+  * versionN
+2. The user selects one or more entries which are passed to the build as parameters
 
 ### Schedule Build
 
 1. Pass the selection, i.e. a list of artifacts to the Ant script that will be triggered
   -Dartifacts=https://www.mycompany.com/maven/com/company/product/component1/abc-1.0.0.zip,https://www.mycompany.com/maven/com/company/product/component1/abc-1.0.0-source.zip,https://www.mycompany.com/maven/com/company/product/component1/abc-1.0.0-doc.zip
-2. The ant script iterates over the list and transfers the files to the project specific desitination
+2. The ant script iterates over the list and transfers the files to the project specific destination
 
 ######################
 ### IMPLEMENTATION ###
 ######################
 
-1. Use HTTPclient for accessing the Maven repository
-Do not use the Nexus or Artifactory REST interfaces because that 
-makes us dependent on those repository managers only.
 
+######################
+###  OPEN  ISSUES  ###
+######################
+
+1. How to get an XML representation of a Maven repository folder
+2. Pattern: include/exclude (see Ant)
+3. Use Gradle instead of Ant?
+ 
