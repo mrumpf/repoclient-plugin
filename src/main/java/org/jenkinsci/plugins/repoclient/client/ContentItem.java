@@ -1,28 +1,25 @@
-package org.jenkinsci.plugins.repoclient.client.nexus;
+package org.jenkinsci.plugins.repoclient.client;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import javax.xml.bind.annotation.XmlElement;
 
 /**
- * The FolderInfo class representing folder meta information.
- * 
- * @see http://wiki.jfrog.org/confluence/display/RTF/Artifactory%27s+REST+API#
- *      Artifactory%27sRESTAPI-FolderInfo
  * 
  * @author mrumpf
+ *
  */
 public class ContentItem {
-
 	private String resourceURI;
 	private String relativePath;
 	private String text;
-	private boolean leaf;
+	private String leaf;
 	private String lastModified;
-	private long sizeOnDisk;
+	private String sizeOnDisk;
 
 	public String getResourceURI() {
 		return resourceURI;
 	}
 
+	@XmlElement
 	public void setResourceURI(String resourceURI) {
 		this.resourceURI = resourceURI;
 	}
@@ -31,6 +28,7 @@ public class ContentItem {
 		return relativePath;
 	}
 
+	@XmlElement
 	public void setRelativePath(String relativePath) {
 		this.relativePath = relativePath;
 	}
@@ -39,15 +37,17 @@ public class ContentItem {
 		return text;
 	}
 
+	@XmlElement
 	public void setText(String text) {
 		this.text = text;
 	}
 
-	public boolean isLeaf() {
+	public String getLeaf() {
 		return leaf;
 	}
 
-	public void setLeaf(boolean leaf) {
+	@XmlElement
+	public void setLeaf(String leaf) {
 		this.leaf = leaf;
 	}
 
@@ -55,20 +55,37 @@ public class ContentItem {
 		return lastModified;
 	}
 
+	@XmlElement
 	public void setLastModified(String lastModified) {
 		this.lastModified = lastModified;
 	}
 
-	public long getSizeOnDisk() {
+	public String getSizeOnDisk() {
 		return sizeOnDisk;
 	}
 
-	public void setSizeOnDisk(long sizeOnDisk) {
+	@XmlElement
+	public void setSizeOnDisk(String sizeOnDisk) {
 		this.sizeOnDisk = sizeOnDisk;
 	}
 
 	@Override
 	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
+		StringBuffer sb = new StringBuffer();
+		sb.append("ContentItem[");
+		sb.append("resourceURI=");
+		sb.append(resourceURI);
+		sb.append(", relativePath=");
+		sb.append(relativePath);
+		sb.append(", text=");
+		sb.append(text);
+		sb.append(", leaf=");
+		sb.append(leaf);
+		sb.append(", lastModified=");
+		sb.append(lastModified);
+		sb.append(", sizeOnDisk=");
+		sb.append(sizeOnDisk);
+		sb.append("]");
+		return sb.toString();
 	}
 }

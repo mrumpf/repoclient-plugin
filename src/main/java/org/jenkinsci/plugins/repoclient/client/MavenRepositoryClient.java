@@ -2,9 +2,6 @@ package org.jenkinsci.plugins.repoclient.client;
 
 import java.util.List;
 
-import org.jenkinsci.plugins.repoclient.ArtifactId;
-import org.jenkinsci.plugins.repoclient.GroupId;
-import org.jenkinsci.plugins.repoclient.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +16,7 @@ import org.slf4j.LoggerFactory;
  * @author mrumpf
  * 
  */
-public abstract class MavenRepositoryClient {
+public class MavenRepositoryClient {
 
 	/**
 	 * Determines which repository implementation will be created by the
@@ -56,13 +53,17 @@ public abstract class MavenRepositoryClient {
 	 * 
 	 * @return a list of groupIds from a Maven repository folder
 	 */
-	public abstract List<GroupId> getGroupIds();
+	public List<GroupId> getGroupIds() {
+		return null;
+	}
 
 	/**
 	 * 
 	 * @return a list of artifactIds from the Maven repository folder
 	 */
-	public abstract List<ArtifactId> getArtifactIds(GroupId groupId);
+	public List<ArtifactId> getArtifactIds(GroupId groupId) {
+		return null;
+	}
 
 	/**
 	 * 
@@ -70,7 +71,9 @@ public abstract class MavenRepositoryClient {
 	 *            the component to get the versions for
 	 * @return a list of versions for the specified component
 	 */
-	public abstract List<Version> getVersions(ArtifactId artifactId);
+	public List<Version> getVersions(ArtifactId artifactId) {
+		return null;
+	}
 
 	/**
 	 * 

@@ -1,7 +1,8 @@
-package org.jenkinsci.plugins.repoclient;
+package org.jenkinsci.plugins.repoclient.client;
 
 import java.io.Serializable;
 import java.util.StringTokenizer;
+
 
 public class Version implements Serializable, Comparable<Version> {
 	private static final long serialVersionUID = 1L;

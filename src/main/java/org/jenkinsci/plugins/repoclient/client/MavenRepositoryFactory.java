@@ -1,7 +1,5 @@
 package org.jenkinsci.plugins.repoclient.client;
 
-import org.jenkinsci.plugins.repoclient.client.artifactory.ArtifactoryClient;
-import org.jenkinsci.plugins.repoclient.client.nexus.NexusClient;
 import org.jenkinsci.plugins.repoclient.config.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,14 +45,7 @@ public class MavenRepositoryFactory {
 			config = new Configuration();
 		}
 		String type = config.getString(MavenRepositoryClient.MVN_REPO_TYPE);
-		MavenRepositoryClient client = null;
-		if (RepoType.NEXUS.toString().equalsIgnoreCase(type)) {
-			client = new NexusClient(config);
-		} else if (RepoType.ARTIFACTORY.toString().equalsIgnoreCase(type)) {
-			client = new ArtifactoryClient(config);
-		} else {
-			throw new RuntimeException("unknown repo type: " + type);
-		}
+		MavenRepositoryClient client = new MavenRepositoryClient();
 		if (logger.isDebugEnabled()) {
 			logger.debug("Created client: " + client);
 		}
