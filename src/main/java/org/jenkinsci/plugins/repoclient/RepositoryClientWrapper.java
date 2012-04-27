@@ -3,8 +3,6 @@ package org.jenkinsci.plugins.repoclient;
 import hudson.Extension;
 import hudson.Launcher;
 import hudson.model.BuildListener;
-import hudson.model.ParameterDefinition;
-import hudson.model.ParameterValue;
 import hudson.model.AbstractBuild;
 import hudson.model.AbstractProject;
 import hudson.tasks.BuildWrapper;
@@ -20,7 +18,6 @@ import javax.servlet.ServletException;
 import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
-import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 
@@ -33,62 +30,12 @@ public class RepositoryClientWrapper extends BuildWrapper {
 
 	private static final Logger logger = Logger
 			.getLogger(RepositoryClientWrapper.class);
-	private String repoName;
-	private String groupId;
-	private String pattern;
 
 	@Extension
 	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
 
-	/**
-	 * Getter method used to look up the ENV based on the dropdown selection in
-	 * the job config
-	 * 
-	 * @return
-	 */
-	public Repository getRepository() {
-		Repository[] repos = DESCRIPTOR.getRepos();
-
-		if (repoName == null && repos.length > 0) {
-			// default
-			logger.info("repo name=" + repos[0]);
-			return repos[0];
-		}
-
-		for (Repository r : repos) {
-			if (r.getName().equals(repoName)) {
-				logger.info("repo name=" + r);
-				return r;
-			}
-		}
-		return null;
+	public RepositoryClientWrapper() {
 	}
-
-	// Fields in config.jelly must match the parameter names in the
-	// "DataBoundConstructor"
-	@DataBoundConstructor
-	public RepositoryClientWrapper(String repoName, String groupId, String pattern) {
-		this.repoName = repoName;
-		this.groupId = groupId;
-		this.pattern = pattern;
-	}
-
-	/**
-	 * Returns the selected repository name.
-	 * 
-	 * @return the selected repository name
-	 */
-	public String getRepoName() {
-		return repoName;
-	}
-	public String getGroupId() {
-		return groupId;
-	}
-
-	public String getPattern() {
-		return pattern;
-	}
-
 
 	@Override
 	public Environment setUp(AbstractBuild build, Launcher launcher,

@@ -40,17 +40,6 @@ public class Repository {
 		this.name = name;
 	}
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
-		sb.append(Repository.class.getSimpleName());
-		sb.append('[');
-		sb.append("name=");
-		sb.append(name);
-		sb.append("baseurl=");
-		sb.append(baseurl);
-		sb.append("username=");
-		sb.append(username);
-		sb.append("password=********");
-		sb.append(']');
-		return sb.toString();
+		return name;
 	}
 }

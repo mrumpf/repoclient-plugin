@@ -26,12 +26,29 @@ THE SOFTWARE.
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define"
 	xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form"
 	xmlns:i="jelly:fmt" xmlns:p="/lib/hudson/project">
+	<!--
+      instance   -> org.jenkinsci.plugins.repoclient.RepositoryClientParameterDefinition	  
+	  descriptor -> org.jenkinsci.plugins.repoclient.RepositoryClientParameterDefinition$DescriptorImpl
+	 -->
+  <f:entry title="Repository" field="repoName" help="/plugin/repoclient/help-repository.html">
+    <select class="setting-input" name="parameter.repoName" description="Select the repository">
+      <j:forEach var="s" items="${descriptor.repos}">
+        <f:option selected="${s.name==instance.repoName}">${s.name}</f:option>
+      </j:forEach>
+    </select>
+  </f:entry>
     <f:entry title="${%Name}" help="/help/parameter/name.html">
 		<f:textbox name="parameter.name" value="${instance.name}" />
 	</f:entry>
-	<f:entry title="${%Choices}" help="/help/parameter/choice-choices.html">
-		<f:textarea name="parameter.choices" value="${instance.choicesText}" />
+	<f:entry title="${%GroupId}" help="/help/parameter/client-groupId.html">
+		<f:textbox name="parameter.groupId" value="${instance.groupId}" />
 	</f:entry>
+    <f:entry title="${%ArtifactId}" help="/help/parameter/client-artifactId.html">
+        <f:textbox name="parameter.artifactId" value="${instance.artifactId}" />
+    </f:entry>
+    <f:entry title="${%Pattern}" help="/help/parameter/client-pattern.html">
+        <f:textbox name="parameter.pattern" value="${instance.pattern}" />
+    </f:entry>
     <f:entry title="${%Description}" help="/help/parameter/description.html">
         <f:textarea name="parameter.description" value="${instance.description}" />
     </f:entry>
