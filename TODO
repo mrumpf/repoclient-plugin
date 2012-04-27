@@ -2,5 +2,27 @@
   Secret.fromString(password);
   Secret.toString(password);
 2. Use ArtifactId as name for the index.jelly
-3. Filter other files
-4. get the pattern URLs
+3. Filter other files, not only maven-metadata.*
+4. Make sure that the dropdown boxes have the same width
+5. Write test-cases
+6. use logging
+7. Make sure that the paramters get passed to the buidl script
+   c1=3.0.0.0.295
+   a1=1.6
+8. Pass multiple parameters to the script
+   c1=3.0.0.0.295
+   c1.pattern=*.zip
+   a1=1.6
+   a1.pattern=*.jar
+9. Write an Ant script that downloads the files:
+
+      <get dest="${destdir}">
+        <url url="@{url}"/>
+        <url url="@{url}.sha1"/>
+        <firstmatchmapper>
+          <globmapper from="@{url}.sha1" to="@{dest}.sha"/>
+          <globmapper from="@{url}" to="@{dest}"/>
+        </firstmatchmapper>
+      </get>
+10. Help files
+11. Write documentation
