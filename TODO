@@ -1,1 +1,6 @@
-1. Get rid of Build-Environment checkbox!?!?
+1. Use Secret to hide passwords in XML:
+  Secret.fromString(password);
+  Secret.toString(password);
+2. Use ArtifactId as name for the index.jelly
+3. Filter other files
+4. get the pattern URLs

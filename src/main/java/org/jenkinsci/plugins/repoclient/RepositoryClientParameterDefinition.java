@@ -5,19 +5,29 @@ import hudson.model.ParameterValue;
 import hudson.model.SimpleParameterDefinition;
 import hudson.model.ParameterDefinition;
 import hudson.model.StringParameterValue;
+import hudson.util.CopyOnWriteList;
+import hudson.util.FormValidation;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+
+import javax.servlet.ServletException;
 
 import net.sf.json.JSONObject;
 
+import org.apache.log4j.Logger;
+import org.jenkinsci.plugins.repoclient.client.MavenRepositoryClient;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.export.Exported;
 
 public class RepositoryClientParameterDefinition extends
 		SimpleParameterDefinition {
+
+	private static final Logger logger = Logger
+			.getLogger(RepositoryClientParameterDefinition.class);
 
 	private final String groupId;
 	private final String repoName;
@@ -26,15 +36,14 @@ public class RepositoryClientParameterDefinition extends
 
 	@DataBoundConstructor
 	public RepositoryClientParameterDefinition(String artifactId,
-			String description, String repoName, String name,
-			String groupId, String pattern) {
+			String description, String repoName, String name, String groupId,
+			String pattern) {
 		super(name, description);
 		this.repoName = repoName;
 		this.groupId = groupId;
 		this.artifactId = artifactId;
 		this.pattern = pattern;
-		System.err.println("RepositoryClientParameterDefinition: "
-				+ this);
+		System.err.println("RepositoryClientParameterDefinition: " + this);
 	}
 
 	@Override
@@ -42,11 +51,18 @@ public class RepositoryClientParameterDefinition extends
 		System.err.println("copyWithDefaultValue: " + defaultValue);
 		if (defaultValue instanceof StringParameterValue) {
 			StringParameterValue value = (StringParameterValue) defaultValue;
-			return new RepositoryClientParameterDefinition("", getName(),
-					"", "", value.value, getDescription());
+			return new RepositoryClientParameterDefinition("", getName(), "",
+					"", value.value, getDescription());
 		} else {
 			return this;
 		}
+	}
+
+	@Exported
+	public List<String> getChoices() {
+		Repository r = DESCRIPTOR.getRepo(repoName);
+		List<String> versions = MavenRepositoryClient.getVersions(r.getBaseurl(), groupId, artifactId, r.getUsername(), r.getPassword());
+		return versions;
 	}
 
 	@Exported
@@ -93,7 +109,59 @@ public class RepositoryClientParameterDefinition extends
 	}
 
 	@Extension
+	public static final DescriptorImpl DESCRIPTOR = new DescriptorImpl();
+
 	public static class DescriptorImpl extends ParameterDescriptor {
+		private final CopyOnWriteList<Repository> repos = new CopyOnWriteList<Repository>();
+
+		public DescriptorImpl() {
+			super(RepositoryClientParameterDefinition.class);
+			load();
+		}
+
+		public Repository getRepo(String repoName) {
+			Repository result = null;
+			for (Repository r : repos) {
+				if (repoName.equals(r.getName())) {
+					result = r;
+				}
+			}
+			return result;
+		}
+
+		public Repository[] getRepos() {
+			return repos.toArray(new Repository[repos.size()]);
+		}
+
+		// @Override
+		// public BuildWrapper newInstance(StaplerRequest req, JSONObject
+		// formData)
+		// throws FormException {
+		// return req.bindJSON(RepositoryClientWrapper.class, formData);
+		// }
+		//
+
+		// Save the form data
+		@Override
+		public boolean configure(StaplerRequest req, JSONObject formData) {
+			repos.replaceBy(req.bindParametersToList(Repository.class, "repo."));
+			save();
+			return true;
+		}
+
+		public FormValidation doTestConnection(
+				@QueryParameter("baseurl") final String baseurl,
+				@QueryParameter("username") final String username,
+				@QueryParameter("password") final String password)
+				throws IOException, ServletException {
+			try {
+				logger.warn("TODO");
+				return FormValidation.ok("Success");
+			} catch (Exception e) {
+				return FormValidation.error("Client error : " + e.getMessage());
+			}
+		}
+
 		@Override
 		public String getDisplayName() {
 			System.err.println("getDisplayName");
@@ -105,10 +173,6 @@ public class RepositoryClientParameterDefinition extends
 		public String getHelpFile() {
 			System.err.println("getHelpFile");
 			return "/client.html";
-		}
-
-		public Repository[] getRepos() {
-			return RepositoryClientWrapper.DESCRIPTOR.getRepos();
 		}
 
 		private StringParameterValue checkValue(StringParameterValue value) {
