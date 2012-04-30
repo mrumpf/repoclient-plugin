@@ -37,9 +37,6 @@ THE SOFTWARE.
       </j:forEach>
     </select>
   </f:entry>
-    <f:entry title="${%Name}" help="/help/parameter/name.html">
-		<f:textbox name="parameter.name" value="${instance.name}" />
-	</f:entry>
 	<f:entry title="${%GroupId}" help="/help/parameter/client-groupId.html">
 		<f:textbox name="parameter.groupId" value="${instance.groupId}" />
 	</f:entry>

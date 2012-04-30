@@ -3,17 +3,18 @@ package org.jenkinsci.plugins.repoclient;
 import hudson.Extension;
 import hudson.model.ParameterValue;
 import hudson.model.SimpleParameterDefinition;
+import hudson.model.Hudson;
 import hudson.model.ParameterDefinition;
 import hudson.model.StringParameterValue;
 import hudson.util.CopyOnWriteList;
 import hudson.util.FormValidation;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletException;
 
+import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
@@ -36,23 +37,20 @@ public class RepositoryClientParameterDefinition extends
 
 	@DataBoundConstructor
 	public RepositoryClientParameterDefinition(String artifactId,
-			String description, String repoName, String name, String groupId,
-			String pattern) {
-		super(name, description);
+			String description, String repoName, String groupId, String pattern) {
+		super(groupId + "." + artifactId, description);
 		this.repoName = repoName;
 		this.groupId = groupId;
 		this.artifactId = artifactId;
 		this.pattern = pattern;
-		System.err.println("RepositoryClientParameterDefinition: " + this);
 	}
 
 	@Override
 	public ParameterDefinition copyWithDefaultValue(ParameterValue defaultValue) {
-		System.err.println("copyWithDefaultValue: " + defaultValue);
 		if (defaultValue instanceof StringParameterValue) {
 			StringParameterValue value = (StringParameterValue) defaultValue;
 			return new RepositoryClientParameterDefinition("", getName(), "",
-					"", value.value, getDescription());
+					value.value, getDescription());
 		} else {
 			return this;
 		}
@@ -61,51 +59,47 @@ public class RepositoryClientParameterDefinition extends
 	@Exported
 	public List<String> getChoices() {
 		Repository r = DESCRIPTOR.getRepo(repoName);
-		List<String> versions = MavenRepositoryClient.getVersions(r.getBaseurl(), groupId, artifactId, r.getUsername(), r.getPassword());
+		List<String> versions = null;
+		if (r != null) {
+			versions = MavenRepositoryClient.getVersions(r.getBaseurl(),
+					groupId, artifactId, r.getUsername(), r.getPassword());
+		}
 		return versions;
 	}
 
 	@Exported
 	public String getArtifactId() {
-		System.err.println("getArtifactId: " + artifactId);
 		return artifactId;
 	}
 
 	@Exported
 	public String getRepoName() {
-		System.err.println("getRepoName: " + repoName);
 		return repoName;
 	}
 
 	@Exported
 	public String getGroupId() {
-		System.err.println("getGroupId: " + groupId);
 		return groupId;
 	}
 
 	@Exported
 	public String getPattern() {
-		System.err.println("getPattern: " + pattern);
 		return pattern;
-	}
-
-	private StringParameterValue checkValue(StringParameterValue value) {
-		return value;
 	}
 
 	@Override
 	public ParameterValue createValue(StaplerRequest req, JSONObject jo) {
-		StringParameterValue value = req.bindJSON(StringParameterValue.class,
+		StringParameterValue version = req.bindJSON(StringParameterValue.class,
 				jo);
-		value.setDescription(getDescription());
-		System.err.println("createValue: " + value);
-		return checkValue(value);
+		return new RepositoryClientParameterValue(repoName, groupId,
+				artifactId, version.toString(), pattern,
+				DESCRIPTOR.getRepo(repoName));
 	}
 
-	public StringParameterValue createValue(String value) {
-		System.err.println("createValue: " + value);
-		return checkValue(new StringParameterValue(getName(), value,
-				getDescription()));
+	@Override
+	public ParameterValue createValue(String version) {
+		return new RepositoryClientParameterValue(repoName, groupId,
+				artifactId, version, pattern, DESCRIPTOR.getRepo(repoName));
 	}
 
 	@Extension
@@ -120,11 +114,19 @@ public class RepositoryClientParameterDefinition extends
 		}
 
 		public Repository getRepo(String repoName) {
+			logger.debug("getRepo(" + repoName + ")");
 			Repository result = null;
 			for (Repository r : repos) {
 				if (repoName.equals(r.getName())) {
+					if (result != null) {
+						logger.warn("Repository " + repoName
+								+ " found multiple times");
+					}
 					result = r;
 				}
+			}
+			if (result == null) {
+				logger.warn("Repository " + repoName + " not found");
 			}
 			return result;
 		}
@@ -133,52 +135,47 @@ public class RepositoryClientParameterDefinition extends
 			return repos.toArray(new Repository[repos.size()]);
 		}
 
-		// @Override
-		// public BuildWrapper newInstance(StaplerRequest req, JSONObject
-		// formData)
-		// throws FormException {
-		// return req.bindJSON(RepositoryClientWrapper.class, formData);
-		// }
-		//
-
-		// Save the form data
 		@Override
 		public boolean configure(StaplerRequest req, JSONObject formData) {
-			repos.replaceBy(req.bindParametersToList(Repository.class, "repo."));
+			if (formData.has("repo")) {
+				repos.replaceBy(JSONArray.toList(formData.getJSONArray("repo"),
+						Repository.class));
+			} else {
+				repos.clear();
+			}
 			save();
 			return true;
 		}
 
 		public FormValidation doTestConnection(
-				@QueryParameter("baseurl") final String baseurl,
-				@QueryParameter("username") final String username,
-				@QueryParameter("password") final String password)
-				throws IOException, ServletException {
+				@QueryParameter final String baseurl,
+				@QueryParameter final String username,
+				@QueryParameter final String password) throws IOException,
+				ServletException {
 			try {
-				logger.warn("TODO");
-				return FormValidation.ok("Success");
+				if (MavenRepositoryClient.testConnection(baseurl, username,
+						password)) {
+					return FormValidation.ok("Success");
+				} else {
+					return FormValidation.error("Connection test failed");
+				}
 			} catch (Exception e) {
+				e.printStackTrace();
+				logger.error("Client error: " + e.getMessage(), e);
 				return FormValidation.error("Client error : " + e.getMessage());
 			}
 		}
 
 		@Override
 		public String getDisplayName() {
-			System.err.println("getDisplayName");
-			return "Maven Repository Artifact - Version List";
+			return "Maven Repository Artifact";
 			// Messages.ChoiceParameterDefinition_DisplayName();
 		}
 
 		@Override
 		public String getHelpFile() {
-			System.err.println("getHelpFile");
 			return "/client.html";
 		}
-
-		private StringParameterValue checkValue(StringParameterValue value) {
-			return value;
-		}
-
 	}
 
 	public String toString() {

@@ -1,20 +1,42 @@
-######################
-### USER INTERFACE ###
-######################
+###############################################################################
+### INTRODUCTION                                                            ###
+###############################################################################
 
-### Global Configuration
+The Maven Repository Client Plugin provides a way to select a version from a
+Maven repository in order to further operate on the build artifacts, associated
+with that version. For example for uploading ZIP archives to a remote server or
+deploying them to an application server.
+
+The idea behind this is that you continuously deploy all your build artifacts
+to a Maven repository. But you deploy only selected ones to a remote site, a
+customer FTP server for example.
+
+###############################################################################
+### PREREQUISITES                                                           ###
+###############################################################################
+
+The current implementation works with a Nexus repository only, as only there
+you get an easy parsable response when you specify a mime-type application/xml.
+Artifactory always returns a HTML page where you are forced to parse the href
+attributtes.
+
+###############################################################################
+### USER INTERFACE ###
+###############################################################################
+
+### Global Configuration ###
 
 Define multiple Maven repositories that can be accessed by the Jenkins instance:
 1. Name: Main
-2. Server Base URL: https://www.mycompany.com/maven
+2. Server Base URL: https://www.mycompany.com/maven/
 3. Username: user  (global read-only user)
 4. Password: password
 
-### Job Configuration
+### Job Configuration ###
 
 1. Check the "parameterized Build" checkbox
 2. Create a parameter (create multiple parameters for multiple artifacts)
-  Maven Repository Artifacts
+  Maven Repository Artifact - Version List
 3. Select Maven repository, as defined in the Global Configuration:
   Main
 4. Enter a groupId
@@ -24,31 +46,23 @@ Define multiple Maven repositories that can be accessed by the Jenkins instance:
 6. Enter a pattern which files to transfer
   Example: *.zip
 
-### Build Now
+### Build Now ###
 
 1. Show a list with all versions from the specified groupId.artifactId folder
   * version1
   * version2
   * ...
   * versionN
-2. The user selects one or more entries which are passed to the build as parameters
+2. The user selects one entry for which the files are passed to the build as parameters
 
-### Schedule Build
+### Schedule Build ###
 
 1. Pass the selection, i.e. a list of artifacts to the Ant script that will be triggered
-  -Dartifacts=https://www.mycompany.com/maven/com/company/product/component1/abc-1.0.0.zip,https://www.mycompany.com/maven/com/company/product/component1/abc-1.0.0-source.zip,https://www.mycompany.com/maven/com/company/product/component1/abc-1.0.0-doc.zip
-2. The ant script iterates over the list and transfers the files to the project specific destination
+  -Dartifacts=https://www.mycompany.com/maven/com/company/product/component1/abc-1.0.0.zip,
+              https://www.mycompany.com/maven/com/company/product/component1/abc-1.0.0-source.zip,
+              https://www.mycompany.com/maven/com/company/product/component1/abc-1.0.0-doc.zip
+2. The ant script iterates over the list, downloads them from the Maven repository and transfers the files to the project specific destination
 
-######################
-### IMPLEMENTATION ###
-######################
-
-
-######################
-###  OPEN  ISSUES  ###
-######################
-
-1. How to get an XML representation of a Maven repository folder
-2. Pattern: include/exclude (see Ant)
-3. Use Gradle instead of Ant?
- 
+###############################################################################
+### IMPLEMENTATION                                                          ###
+###############################################################################

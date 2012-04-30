@@ -22,16 +22,16 @@
       <f:repeatable var="repo" items="${descriptor.repos}">
         <table width="80%">
           <f:entry title="Repository name" help="/plugin/repoclient/help-name.html">
-            <f:textbox name="repo.name" value="${repo.name}"/>
+            <f:textbox field="name" value="${repo.name}"/>
           </f:entry>
           <f:entry title="Base URL" help="/plugin/repoclient/help-baseurl.html">
-            <f:textbox name="repo.baseurl" value="${repo.baseurl}"/>
+            <f:textbox field="baseurl" value="${repo.baseurl}"/>
           </f:entry>
           <f:entry title="User name" help="/plugin/repoclient/help-username.html">
-            <f:textbox name="repo.username" value="${repo.username}"/>
+            <f:textbox field="username" value="${repo.username}"/>
           </f:entry>
           <f:entry title="Password" help="/plugin/repoclient/help-password.html">
-            <f:password name="repo.password" value="${repo.password}"/>
+            <f:password field="password" value="${repo.password}"/>
           </f:entry>
           <f:validateButton title="${%Test Connection}" progress="${%Testing...}"
                             method="testConnection" with="baseurl,username,password" />

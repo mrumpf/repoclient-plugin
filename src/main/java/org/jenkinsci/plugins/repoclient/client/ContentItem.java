@@ -3,9 +3,9 @@ package org.jenkinsci.plugins.repoclient.client;
 import javax.xml.bind.annotation.XmlElement;
 
 /**
- * 
- * @author mrumpf
+ * @see Content
  *
+ * @author mrumpf
  */
 public class ContentItem {
 	private String resourceURI;

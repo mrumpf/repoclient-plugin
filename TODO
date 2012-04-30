@@ -1,21 +1,18 @@
 1. Use Secret to hide passwords in XML:
   Secret.fromString(password);
   Secret.toString(password);
-2. Use ArtifactId as name for the index.jelly
+DONE 2. Use groupId.artifactId as name for the index.jelly label
 3. Filter other files, not only maven-metadata.*
-4. Make sure that the dropdown boxes have the same width
+WONTFIX 4. Make sure that the dropdown boxes have the same width
 5. Write test-cases
-6. use logging
-7. Make sure that the paramters get passed to the buidl script
-   c1=3.0.0.0.295
-   a1=1.6
+6. Add logging
+7. Show a warning when there is no Maven repository defined in the global configuration
 8. Pass multiple parameters to the script
    c1=3.0.0.0.295
    c1.pattern=*.zip
    a1=1.6
    a1.pattern=*.jar
 9. Write an Ant script that downloads the files:
-
       <get dest="${destdir}">
         <url url="@{url}"/>
         <url url="@{url}.sha1"/>
@@ -26,3 +23,8 @@
       </get>
 10. Help files
 11. Write documentation
+12. Use Gradle instead of Ant!?
+13. Pass the pattern or the list of files
+14. Declare config fields as mandatory/optional
+DONE  15. Implement "Test Connection" functionality
+16. I18N

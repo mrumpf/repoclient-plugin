@@ -15,6 +15,7 @@ import org.apache.commons.httpclient.Credentials;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpMethod;
+import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -22,15 +23,9 @@ import org.apache.log4j.Logger;
 import org.jenkinsci.plugins.repoclient.RepositoryClientParameterDefinition;
 
 /**
- * This is the base class for all Maven repository clients. Currently there are
- * the following clients available:
- * <ul>
- * <li>NexusClient</li>
- * <li>ArtifactoryClient</li>
- * </ul>
+ * 
  * 
  * @author mrumpf
- * 
  */
 public class MavenRepositoryClient {
 	private static final Logger logger = Logger
@@ -39,27 +34,27 @@ public class MavenRepositoryClient {
 	public static List<String> getVersions(String baseurl, String groupId,
 			String artifactId, String username, String password) {
 
-		// create a singular HttpClient object
+		String url = concatUrl(baseurl, groupId, artifactId);
+
 		HttpClient client = new HttpClient();
 
-		String url = concatUrl(baseurl, groupId, artifactId);
 		setProxy(client);
 
-		// establish a connection within 5 seconds
+		// establish a connection within 10 seconds
 		client.getHttpConnectionManager().getParams()
 				.setConnectionTimeout(5000);
 
-		// set the default credentials
-		Credentials creds = new UsernamePasswordCredentials(username, password);
-		if (creds != null) {
-			client.getState().setCredentials(AuthScope.ANY, creds);
+		if (username != null) {
+			Credentials creds = new UsernamePasswordCredentials(username,
+					password);
+			if (creds != null) {
+				client.getState().setCredentials(AuthScope.ANY, creds);
+			}
 		}
 
-		// execute the method
 		String responseBody = null;
 		HttpMethod method = null;
 		try {
-			// create a method object
 			method = new GetMethod(url);
 			method.setRequestHeader("Accept", "application/xml");
 			method.setFollowRedirects(true);
@@ -67,12 +62,10 @@ public class MavenRepositoryClient {
 			client.executeMethod(method);
 			responseBody = method.getResponseBodyAsString();
 		} catch (HttpException he) {
-			System.err.println("Http error connecting to '" + url + "'");
-			System.err.println(he.getMessage());
+			logger.error("Http error connecting to '" + url + "'", he);
 		} catch (IOException ioe) {
-			System.err.println("Unable to connect to '" + url + "'");
+			logger.error("Unable to connect to '" + url + "'", ioe);
 		} finally {
-			// clean up the connection resources
 			if (method != null) {
 				method.releaseConnection();
 			}
@@ -99,7 +92,7 @@ public class MavenRepositoryClient {
 				client.getHostConfiguration().setProxy(pc.name, pc.port);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("Unable to determine proxy", e);
 		}
 	}
 
@@ -137,11 +130,50 @@ public class MavenRepositoryClient {
 
 			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
 			content = (Content) jaxbUnmarshaller.unmarshal(sr);
-			System.out.println(content);
 
 		} catch (JAXBException e) {
-			e.printStackTrace();
+			logger.error("Unmarshaling of XML data failed", e);
 		}
 		return content;
+	}
+
+	public static boolean testConnection(String url, String username,
+			String password) {
+
+		boolean result = false;
+		HttpClient client = new HttpClient();
+
+		setProxy(client);
+
+		// establish a connection within 10 seconds
+		client.getHttpConnectionManager().getParams()
+				.setConnectionTimeout(5000);
+
+		if (username != null) {
+			Credentials creds = new UsernamePasswordCredentials(username,
+					password);
+			if (creds != null) {
+				client.getState().setCredentials(AuthScope.ANY, creds);
+			}
+		}
+
+		HttpMethod method = null;
+		try {
+			method = new GetMethod(url);
+			method.setRequestHeader("Accept", "application/xml");
+			method.setFollowRedirects(true);
+
+			int statusCode = client.executeMethod(method);
+			result = (statusCode == HttpStatus.SC_OK);
+		} catch (HttpException he) {
+			logger.error("Http error connecting to '" + url + "'", he);
+		} catch (IOException ioe) {
+			logger.error("Unable to connect to '" + url + "'", ioe);
+		} finally {
+			if (method != null) {
+				method.releaseConnection();
+			}
+		}
+		return result;
 	}
 }

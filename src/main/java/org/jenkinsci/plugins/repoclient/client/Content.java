@@ -8,15 +8,15 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 
 /**
- * This represents a content-item of a Maven repository repsonse with mime-type
- * application/xml.
+ * This represents a content-item of a Maven repository response with mime-type
+ * application/xml for the Accept HTTP header.
  *
  * <pre>
  * <content>
  *   <data>
  *     <content-item>
- *       <resourceURI>https://seu75.gdc-leinf01.t-systems.com/nexus/content/groups/clusterfc/commons-beanutils/commons-beanutils/maven-metadata.xml.md5</resourceURI>
- *       <relativePath>/groups/clusterfc/commons-beanutils/commons-beanutils/maven-metadata.xml.md5</relativePath>
+ *       <resourceURI>https://www.mycompany.com/nexus/content/groups/repo/com/mycompany/abc/maven-metadata.xml.md5</resourceURI>
+ *       <relativePath>/groups/repo/com/mycompany/abc/maven-metadata.xml.md5</relativePath>
  *       <text>maven-metadata.xml.md5</text> <leaf>true</leaf>
  *       <lastModified>2012-04-22 20:08:56.0 CEST</lastModified>
  *       <sizeOnDisk>33</sizeOnDisk>
@@ -28,7 +28,6 @@ import javax.xml.bind.annotation.XmlRootElement;
  * 
  * @author mrumpf
  */
-
 @XmlRootElement
 public class Content {
 	private List<ContentItem> contentitems;
