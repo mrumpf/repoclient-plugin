@@ -36,6 +36,44 @@ public class MavenRepositoryClient {
 
 		String url = concatUrl(baseurl, groupId, artifactId);
 
+		logger.debug("Getting versions from " + url);
+
+		String responseBody = doHttpRequest(username, password, url);
+
+		Content c = unmarshal(responseBody);
+
+		List<String> versions = new ArrayList<String>();
+		for (ContentItem ci : c.getContentItems()) {
+			String ver = ci.getText();
+			// TODO: Create regex pattern for versions
+			if (!ver.startsWith("maven-metadata")) {
+				versions.add(ver);
+			}
+		}
+		return versions;
+	}
+
+	public static List<String> getFiles(String baseurl, String groupId,
+			String artifactId, String version, String username, String password) {
+
+		String url = concatUrl(baseurl, groupId, artifactId, version);
+
+		logger.debug("Getting files from " + url);
+
+		String responseBody = doHttpRequest(username, password, url);
+
+		Content c = unmarshal(responseBody);
+
+		List<String> files = new ArrayList<String>();
+		for (ContentItem ci : c.getContentItems()) {
+			String file = ci.getText();
+			files.add(url + file);
+		}
+		return files;
+	}
+
+	private static String doHttpRequest(String username, String password,
+			String url) {
 		HttpClient client = new HttpClient();
 
 		setProxy(client);
@@ -70,18 +108,7 @@ public class MavenRepositoryClient {
 				method.releaseConnection();
 			}
 		}
-
-		Content c = unmarshal(responseBody);
-
-		List<String> versions = new ArrayList<String>();
-		for (ContentItem ci : c.getContentItems()) {
-			String ver = ci.getText();
-			// TODO: Create regex pattern for versions
-			if (!ver.startsWith("maven-metadata")) {
-				versions.add(ver);
-			}
-		}
-		return versions;
+		return responseBody;
 	}
 
 	private static void setProxy(HttpClient client) {
@@ -98,15 +125,20 @@ public class MavenRepositoryClient {
 
 	private static String concatUrl(String baseurl, String groupId,
 			String artifactId) {
+		return concatUrl(baseurl, groupId, artifactId, "");
+	}
+
+	private static String concatUrl(String baseurl, String groupId,
+			String artifactId, String version) {
 		StringBuffer sb = new StringBuffer();
 		sb.append(baseurl);
 		if (!baseurl.endsWith("/")) {
 			sb.append("/");
 		}
 		if (groupId.startsWith("/")) {
-			sb.append(groupId.substring(1));
+			sb.append(groupId.substring(1).replace('.', '/'));
 		} else {
-			sb.append(groupId);
+			sb.append(groupId.replace('.', '/'));
 		}
 		if (!groupId.endsWith("/")) {
 			sb.append("/");
@@ -117,6 +149,14 @@ public class MavenRepositoryClient {
 			sb.append(artifactId);
 		}
 		if (!artifactId.endsWith("/")) {
+			sb.append("/");
+		}
+		if (version.startsWith("/")) {
+			sb.append(version.substring(1));
+		} else {
+			sb.append(version);
+		}
+		if (!version.isEmpty() && !version.endsWith("/")) {
 			sb.append("/");
 		}
 		return sb.toString();

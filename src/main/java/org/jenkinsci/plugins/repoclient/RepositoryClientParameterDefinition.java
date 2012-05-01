@@ -89,17 +89,15 @@ public class RepositoryClientParameterDefinition extends
 
 	@Override
 	public ParameterValue createValue(StaplerRequest req, JSONObject jo) {
-		StringParameterValue version = req.bindJSON(StringParameterValue.class,
-				jo);
 		return new RepositoryClientParameterValue(repoName, groupId,
-				artifactId, version.toString(), pattern,
+				artifactId, jo.getString("value"), pattern,
 				DESCRIPTOR.getRepo(repoName));
 	}
 
 	@Override
 	public ParameterValue createValue(String version) {
-		return new RepositoryClientParameterValue(repoName, groupId,
-				artifactId, version, pattern, DESCRIPTOR.getRepo(repoName));
+		// this should never be called
+		throw new RuntimeException("Not implemented");
 	}
 
 	@Extension
