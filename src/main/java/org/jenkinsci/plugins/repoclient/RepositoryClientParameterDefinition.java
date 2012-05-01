@@ -3,7 +3,6 @@ package org.jenkinsci.plugins.repoclient;
 import hudson.Extension;
 import hudson.model.ParameterValue;
 import hudson.model.SimpleParameterDefinition;
-import hudson.model.Hudson;
 import hudson.model.ParameterDefinition;
 import hudson.model.StringParameterValue;
 import hudson.util.CopyOnWriteList;
@@ -145,10 +144,52 @@ public class RepositoryClientParameterDefinition extends
 			return true;
 		}
 
+		public FormValidation doCheckRepoName(
+				@QueryParameter String repoName) throws IOException {
+			System.err.println("doCheckRepoName: " + repoName);
+			return FormValidation.ok();
+		}
+
+		public FormValidation doCheckGroupId(
+				@QueryParameter String groupId) throws IOException {
+			System.err.println("doCheckGroupId: " + groupId);
+			return FormValidation.ok();
+		}
+
+		public FormValidation doCheckArtifactId(
+				@QueryParameter String artifactId) throws IOException {
+			System.err.println("doCheckArtifactId: " + artifactId);
+			return FormValidation.ok();
+		}
+
+		public FormValidation doCheckName(
+				@QueryParameter String name) throws IOException {
+			System.err.println("doCheckName: " + name);
+			return FormValidation.ok();
+		}
+
+		public FormValidation doCheckBaseurl(
+				@QueryParameter String baseurl) throws IOException {
+			System.err.println("doCheckBaseurl: " + baseurl);
+			return FormValidation.ok();
+		}
+
+		public FormValidation doCheckUsername(
+				@QueryParameter String username) throws IOException {
+			System.err.println("doCheckUsername: " + username);
+			return FormValidation.ok();
+		}
+
+		public FormValidation doCheckPassword(
+				@QueryParameter String password) throws IOException {
+			System.err.println("doCheckPassword: " + password);
+			return FormValidation.ok();
+		}
+
 		public FormValidation doTestConnection(
-				@QueryParameter final String baseurl,
-				@QueryParameter final String username,
-				@QueryParameter final String password) throws IOException,
+				@QueryParameter String baseurl,
+				@QueryParameter String username,
+				@QueryParameter String password) throws IOException,
 				ServletException {
 			try {
 				if (MavenRepositoryClient.testConnection(baseurl, username,
@@ -158,7 +199,6 @@ public class RepositoryClientParameterDefinition extends
 					return FormValidation.error("Connection test failed");
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
 				logger.error("Client error: " + e.getMessage(), e);
 				return FormValidation.error("Client error : " + e.getMessage());
 			}

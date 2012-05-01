@@ -2,11 +2,11 @@
   Secret.fromString(password);
   Secret.toString(password);
 DONE 2. Use groupId.artifactId as name for the index.jelly label
-3. Filter other files, not only maven-metadata.*
+3. Filter other files, not only maven-metadata.*, archetype-catalog.*
 WONTFIX 4. Make sure that the dropdown boxes have the same width
 5. Write test-cases
 6. Add logging
-7. Show a warning when there is no Maven repository defined in the global configuration
+DONE 7. Show a warning when there is no Maven repository defined in the global configuration
 DONE 8. Pass multiple parameters to the script
    c1=3.0.0.0.295
    c1.pattern=*.zip
@@ -21,11 +21,12 @@ DONE 8. Pass multiple parameters to the script
           <globmapper from="@{url}" to="@{dest}"/>
         </firstmatchmapper>
       </get>
-10. Help files
+DONE 10. Help files
 11. Write documentation
 12. Use Gradle instead of Ant!?
 DONE 13. Pass the pattern or the list of files
 14. Declare config fields as mandatory/optional
-DONE  15. Implement "Test Connection" functionality
-16. I18N
+DONE 15. Implement "Test Connection" functionality
+DONE 16. I18N
 17. Use regex pattern to filter the files against the pattern
+DONE 18. Add a license
