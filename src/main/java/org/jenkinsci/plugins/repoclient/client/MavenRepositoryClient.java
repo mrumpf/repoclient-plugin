@@ -24,10 +24,13 @@ import org.jenkinsci.plugins.repoclient.RepositoryClientParameterDefinition;
 
 /**
  * 
- * 
  * @author mrumpf
+ * 
  */
 public class MavenRepositoryClient {
+	private static final String FILES_TO_IGNORE = "^maven-metadata.*$|^archetype-catalog.*$";
+	private static final String NONE = "";
+
 	private static final Logger logger = Logger
 			.getLogger(RepositoryClientParameterDefinition.class);
 
@@ -40,21 +43,26 @@ public class MavenRepositoryClient {
 
 		String responseBody = doHttpRequest(username, password, url);
 
+		logger.debug("Response " + responseBody);
+
 		Content c = unmarshal(responseBody);
 
 		List<String> versions = new ArrayList<String>();
-		for (ContentItem ci : c.getContentItems()) {
-			String ver = ci.getText();
-			// TODO: Create regex pattern for versions
-			if (!ver.startsWith("maven-metadata")) {
-				versions.add(ver);
+		versions.add(NONE);
+		if (c != null) {
+			for (ContentItem ci : c.getContentItems()) {
+				String ver = ci.getText();
+				if (!ver.matches(FILES_TO_IGNORE)) {
+					versions.add(ver);
+				}
 			}
 		}
 		return versions;
 	}
 
 	public static List<String> getFiles(String baseurl, String groupId,
-			String artifactId, String version, String username, String password) {
+			String artifactId, String version, String username,
+			String password, String pattern) {
 
 		String url = concatUrl(baseurl, groupId, artifactId, version);
 
@@ -65,9 +73,11 @@ public class MavenRepositoryClient {
 		Content c = unmarshal(responseBody);
 
 		List<String> files = new ArrayList<String>();
-		for (ContentItem ci : c.getContentItems()) {
-			String file = ci.getText();
-			files.add(url + file);
+		if (c != null) {
+			for (ContentItem ci : c.getContentItems()) {
+				String file = ci.getText();
+				files.add(url + file);
+			}
 		}
 		return files;
 	}
@@ -123,12 +133,12 @@ public class MavenRepositoryClient {
 		}
 	}
 
-	private static String concatUrl(String baseurl, String groupId,
+	public static String concatUrl(String baseurl, String groupId,
 			String artifactId) {
 		return concatUrl(baseurl, groupId, artifactId, "");
 	}
 
-	private static String concatUrl(String baseurl, String groupId,
+	public static String concatUrl(String baseurl, String groupId,
 			String artifactId, String version) {
 		StringBuffer sb = new StringBuffer();
 		sb.append(baseurl);

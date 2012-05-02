@@ -1,9 +1,16 @@
 package org.jenkinsci.plugins.repoclient;
 
+import hudson.util.Secret;
+
+/**
+ * 
+ * @author mrumpf
+ *
+ */
 public class Repository {
-	private String name;
+	private String reponame;
 	private String username;
-	private String password;
+	private Secret password;
 	private String baseurl;
 
 	/**
@@ -12,16 +19,16 @@ public class Repository {
 	public Repository() {
 	}
 
-	public Repository(String name, String baseurl, String username,
+	public Repository(String reponame, String baseurl, String username,
 			String password) {
-		this.name = name;
+		this.reponame = reponame;
 		this.baseurl = baseurl;
 		this.username = username;
-		this.password = password;
+		this.password = Secret.fromString(password.trim());;
 	}
 
-	public String getName() {
-		return name;
+	public String getReponame() {
+		return reponame;
 	}
 
 	public String getUsername() {
@@ -41,18 +48,18 @@ public class Repository {
 	}
 
 	public void setPassword(String password) {
-		this.password = password;
+		this.password = Secret.fromString(password.trim());;
 	}
 
 	public String getPassword() {
-		return password;
+		return Secret.toString(password);
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setReponame(String reponame) {
+		this.reponame = reponame;
 	}
 
 	public String toString() {
-		return name;
+		return reponame;
 	}
 }

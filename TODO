@@ -1,17 +1,27 @@
-1. Use Secret to hide passwords in XML:
+DONE 1. Use Secret to hide passwords in XML:
   Secret.fromString(password);
   Secret.toString(password);
 DONE 2. Use groupId.artifactId as name for the index.jelly label
-3. Filter other files, not only maven-metadata.*, archetype-catalog.*
+DONE 3. Filter other files, not only maven-metadata.*, archetype-catalog.*
 WONTFIX 4. Make sure that the dropdown boxes have the same width
-5. Write test-cases
-6. Add logging
+DONE 7. Show a warning when there is no Maven repository defined in the global configuration
+DONE 8. Pass multiple parameters to the script
 DONE 7. Show a warning when there is no Maven repository defined in the global configuration
 DONE 8. Pass multiple parameters to the script
    c1=3.0.0.0.295
    c1.pattern=*.zip
    a1=1.6
    a1.pattern=*.jar
+DONE 10. Help files
+DONE 13. Pass the pattern or the list of files
+DONE 14. Declare config fields as mandatory/optional
+DONE 15. Implement "Test Connection" functionality
+DONE 16. I18N
+DONE 17. Use regex pattern to filter the files against the pattern
+DONE 18. Add a license
+
+5. Write test-cases
+6. Add logging
 9. Write an Ant script that downloads the files:
       <get dest="${destdir}">
         <url url="@{url}"/>
@@ -21,12 +31,18 @@ DONE 8. Pass multiple parameters to the script
           <globmapper from="@{url}" to="@{dest}"/>
         </firstmatchmapper>
       </get>
-DONE 10. Help files
 11. Write documentation
 12. Use Gradle instead of Ant!?
-DONE 13. Pass the pattern or the list of files
-14. Declare config fields as mandatory/optional
-DONE 15. Implement "Test Connection" functionality
-DONE 16. I18N
-17. Use regex pattern to filter the files against the pattern
-DONE 18. Add a license
+19. Add Version sorter class:
+    1.2.3.4_suffix
+    1.2.3.4.suffix
+    1.2.3.4
+    1.2.3
+    1.2
+    1
+20. Allow in the index.jelly file to not select a version, in case
+   you do not want to release one of multiple versions
+21. Refactor MavenRepositoryClient
+22. Validation of 2 fields does not work:
+     groupId + artifactId
+    How to get this fixed?

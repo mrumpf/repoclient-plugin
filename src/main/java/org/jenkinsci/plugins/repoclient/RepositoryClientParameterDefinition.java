@@ -10,6 +10,7 @@ import hudson.util.FormValidation;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.regex.PatternSyntaxException;
 
 import javax.servlet.ServletException;
 
@@ -23,24 +24,29 @@ import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
 import org.kohsuke.stapler.export.Exported;
 
+/**
+ * 
+ * @author mrumpf
+ * 
+ */
 public class RepositoryClientParameterDefinition extends
 		SimpleParameterDefinition {
 
 	private static final Logger logger = Logger
 			.getLogger(RepositoryClientParameterDefinition.class);
 
-	private final String groupId;
-	private final String repoName;
-	private final String artifactId;
+	private final String groupid;
+	private final String reponame;
+	private final String artifactid;
 	private final String pattern;
 
 	@DataBoundConstructor
-	public RepositoryClientParameterDefinition(String artifactId,
-			String description, String repoName, String groupId, String pattern) {
-		super(groupId + "." + artifactId, description);
-		this.repoName = repoName;
-		this.groupId = groupId;
-		this.artifactId = artifactId;
+	public RepositoryClientParameterDefinition(String reponame, String groupid,
+			String artifactid, String pattern, String description) {
+		super(groupid + "." + artifactid, description);
+		this.reponame = reponame;
+		this.groupid = groupid;
+		this.artifactid = artifactid;
 		this.pattern = pattern;
 	}
 
@@ -48,8 +54,8 @@ public class RepositoryClientParameterDefinition extends
 	public ParameterDefinition copyWithDefaultValue(ParameterValue defaultValue) {
 		if (defaultValue instanceof StringParameterValue) {
 			StringParameterValue value = (StringParameterValue) defaultValue;
-			return new RepositoryClientParameterDefinition("", getName(), "",
-					value.value, getDescription());
+			return new RepositoryClientParameterDefinition(getReponame(), "",
+					"", value.value, getDescription());
 		} else {
 			return this;
 		}
@@ -57,28 +63,28 @@ public class RepositoryClientParameterDefinition extends
 
 	@Exported
 	public List<String> getChoices() {
-		Repository r = DESCRIPTOR.getRepo(repoName);
+		Repository r = DESCRIPTOR.getRepo(reponame);
 		List<String> versions = null;
 		if (r != null) {
 			versions = MavenRepositoryClient.getVersions(r.getBaseurl(),
-					groupId, artifactId, r.getUsername(), r.getPassword());
+					groupid, artifactid, r.getUsername(), r.getPassword());
 		}
 		return versions;
 	}
 
 	@Exported
-	public String getArtifactId() {
-		return artifactId;
+	public String getArtifactid() {
+		return artifactid;
 	}
 
 	@Exported
-	public String getRepoName() {
-		return repoName;
+	public String getReponame() {
+		return reponame;
 	}
 
 	@Exported
-	public String getGroupId() {
-		return groupId;
+	public String getGroupid() {
+		return groupid;
 	}
 
 	@Exported
@@ -88,9 +94,9 @@ public class RepositoryClientParameterDefinition extends
 
 	@Override
 	public ParameterValue createValue(StaplerRequest req, JSONObject jo) {
-		return new RepositoryClientParameterValue(repoName, groupId,
-				artifactId, jo.getString("value"), pattern,
-				DESCRIPTOR.getRepo(repoName));
+		return new RepositoryClientParameterValue(reponame, groupid,
+				artifactid, jo.getString("value"), pattern,
+				DESCRIPTOR.getRepo(reponame));
 	}
 
 	@Override
@@ -110,20 +116,20 @@ public class RepositoryClientParameterDefinition extends
 			load();
 		}
 
-		public Repository getRepo(String repoName) {
-			logger.debug("getRepo(" + repoName + ")");
+		public Repository getRepo(String reponame) {
+			logger.debug("getRepo(" + reponame + ")");
 			Repository result = null;
 			for (Repository r : repos) {
-				if (repoName.equals(r.getName())) {
+				if (reponame.equals(r.getReponame())) {
 					if (result != null) {
-						logger.warn("Repository " + repoName
+						logger.warn("Repository " + reponame
 								+ " found multiple times");
 					}
 					result = r;
 				}
 			}
 			if (result == null) {
-				logger.warn("Repository " + repoName + " not found");
+				logger.warn("Repository " + reponame + " not found");
 			}
 			return result;
 		}
@@ -144,70 +150,103 @@ public class RepositoryClientParameterDefinition extends
 			return true;
 		}
 
-		public FormValidation doCheckRepoName(
-				@QueryParameter String repoName) throws IOException {
-			System.err.println("doCheckRepoName: " + repoName);
-			return FormValidation.ok();
+		public FormValidation doCheckGroupid(@QueryParameter String groupid,
+				@QueryParameter String artifactid,
+				@QueryParameter String reponame) throws IOException {
+			FormValidation result = FormValidation.ok();
+			if (groupid == null || groupid.isEmpty()) {
+				result = FormValidation.error(Messages.EmptyGroupId());
+			}
+			else {
+				result = checkPath(artifactid, groupid, reponame);
+			}
+			return result;
 		}
 
-		public FormValidation doCheckGroupId(
-				@QueryParameter String groupId) throws IOException {
-			System.err.println("doCheckGroupId: " + groupId);
-			return FormValidation.ok();
+		public FormValidation doCheckArtifactid(
+				@QueryParameter String artifactid,
+				@QueryParameter String groupid, @QueryParameter String reponame)
+				throws IOException {
+			FormValidation result = FormValidation.ok();
+			if (artifactid == null || artifactid.isEmpty()) {
+				result = FormValidation.error(Messages.EmptyArtifactId());
+			}
+			else {
+				result = checkPath(artifactid, groupid, reponame);
+			}
+			return result;
 		}
 
-		public FormValidation doCheckArtifactId(
-				@QueryParameter String artifactId) throws IOException {
-			System.err.println("doCheckArtifactId: " + artifactId);
-			return FormValidation.ok();
+		private FormValidation checkPath(String artifactid, String groupid,
+				String reponame) {
+			FormValidation result = FormValidation.ok();
+			Repository r = getRepo(reponame);
+			String url = MavenRepositoryClient.concatUrl(r.getBaseurl(), groupid, artifactid);
+			if (!MavenRepositoryClient.testConnection(url, r.getUsername(), r.getPassword())) {
+				result = FormValidation.error(Messages.EmptyArtifactId() + url);
+			}
+			return result;
 		}
 
-		public FormValidation doCheckName(
-				@QueryParameter String name) throws IOException {
-			System.err.println("doCheckName: " + name);
-			return FormValidation.ok();
+		public FormValidation doCheckPattern(@QueryParameter String pattern)
+				throws IOException {
+			FormValidation result = FormValidation.ok();
+			try {
+				pattern.matches("");
+			} catch (PatternSyntaxException ex) {
+				result = FormValidation.error(Messages.RegexPatternNotValid());
+			}
+			return result;
 		}
 
-		public FormValidation doCheckBaseurl(
-				@QueryParameter String baseurl) throws IOException {
-			System.err.println("doCheckBaseurl: " + baseurl);
-			return FormValidation.ok();
+		public FormValidation doCheckReponame(@QueryParameter String reponame)
+				throws IOException {
+			FormValidation result = FormValidation.ok();
+			if (reponame == null || reponame.isEmpty()) {
+				result = FormValidation.error(Messages.EmptyRepositoryName());
+			}
+			return result;
 		}
 
-		public FormValidation doCheckUsername(
+		public FormValidation doCheckBaseurl(@QueryParameter String baseurl)
+				throws IOException {
+			FormValidation result = FormValidation.ok();
+			if (baseurl == null || baseurl.isEmpty()) {
+				result = FormValidation.error(Messages.EmptyBaseURL());
+			}
+			return result;
+		}
+
+		public FormValidation doCheckPassword(@QueryParameter String password,
 				@QueryParameter String username) throws IOException {
-			System.err.println("doCheckUsername: " + username);
-			return FormValidation.ok();
+			FormValidation result = FormValidation.ok();
+			if (password != null && !password.isEmpty()
+					&& (username == null || username.isEmpty())) {
+				result = FormValidation.error(Messages.EmptyUsername());
+			}
+			return result;
 		}
 
-		public FormValidation doCheckPassword(
-				@QueryParameter String password) throws IOException {
-			System.err.println("doCheckPassword: " + password);
-			return FormValidation.ok();
-		}
-
-		public FormValidation doTestConnection(
-				@QueryParameter String baseurl,
-				@QueryParameter String username,
-				@QueryParameter String password) throws IOException,
-				ServletException {
+		public FormValidation doTestConnection(@QueryParameter String baseurl,
+				@QueryParameter String username, @QueryParameter String password)
+				throws IOException, ServletException {
 			try {
 				if (MavenRepositoryClient.testConnection(baseurl, username,
 						password)) {
-					return FormValidation.ok("Success");
+					return FormValidation.ok(Messages.Success());
 				} else {
-					return FormValidation.error("Connection test failed");
+					return FormValidation.error(Messages.ConnectionFailed());
 				}
 			} catch (Exception e) {
 				logger.error("Client error: " + e.getMessage(), e);
-				return FormValidation.error("Client error : " + e.getMessage());
+				return FormValidation.error(Messages.ClientError()
+						+ e.getMessage());
 			}
 		}
 
 		@Override
 		public String getDisplayName() {
-			return "Maven Repository Artifact";
-			// Messages.ChoiceParameterDefinition_DisplayName();
+			return Messages.DisplayName();
 		}
 
 		@Override
@@ -223,12 +262,12 @@ public class RepositoryClientParameterDefinition extends
 		sb.append(getName());
 		sb.append(", description=");
 		sb.append(getDescription());
-		sb.append(", groupId=");
-		sb.append(groupId);
-		sb.append(", repoName=");
-		sb.append(repoName);
-		sb.append(", artifactId=");
-		sb.append(artifactId);
+		sb.append(", groupid=");
+		sb.append(groupid);
+		sb.append(", reponame=");
+		sb.append(reponame);
+		sb.append(", artifactid=");
+		sb.append(artifactid);
 		sb.append(" ,pattern=");
 		sb.append(pattern);
 		sb.append(']');
