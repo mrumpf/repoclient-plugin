@@ -10,14 +10,7 @@
 				<pathelement location="lib/ant-contrib/ant-contrib.jar" />
 			</classpath>
 		</taskdef>
-		<propertyselector 
-			property="url.list" 
-			delimiter="," 
-			match="repoclient\.([^\.]*)\.urls" 
-			select="\1" 
-			casesensitive="false" />
-
-		<foreach list="${url.list}" delimiter="," target="print.name" param="url.id" />
+		<foreach list="${repoclient_urls}" delimiter="," target="print.name" param="url.id" />
 
 	</target>
 	<target name="print.name">

@@ -36,15 +36,15 @@ Define multiple Maven repositories that can be accessed by the Jenkins instance:
 
 1. Check the "parameterized Build" checkbox
 2. Create a parameter (create multiple parameters for multiple artifacts)
-  Maven Repository Artifact - Version List
+  Maven Repository Artifact
 3. Select Maven repository, as defined in the Global Configuration:
   Main
 4. Enter a groupId
   Example: com.company.product
 5. Enter a artifactId
   Example: artifact
-6. Enter a pattern which files to transfer
-  Example: *.zip
+6. Enter a regular expression pattern which files to transfer
+  Example: .*\.zip$
 
 ### Build Now ###
 

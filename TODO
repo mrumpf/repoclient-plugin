@@ -19,7 +19,12 @@ DONE 15. Implement "Test Connection" functionality
 DONE 16. I18N
 DONE 17. Use regex pattern to filter the files against the pattern
 DONE 18. Add a license
+DONE 20. Allow in the index.jelly file to not select a version, in case
+   you do not want to release one of multiple versions
+DONE 23. Use the env to add URLs to a single property
+    repoclient.urls=....
 
+### TODO
 5. Write test-cases
 6. Add logging
 9. Write an Ant script that downloads the files:
@@ -40,8 +45,6 @@ DONE 18. Add a license
     1.2.3
     1.2
     1
-20. Allow in the index.jelly file to not select a version, in case
-   you do not want to release one of multiple versions
 21. Refactor MavenRepositoryClient
 22. Validation of 2 fields does not work:
      groupId + artifactId

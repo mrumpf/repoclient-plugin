@@ -20,6 +20,8 @@ import org.kohsuke.stapler.DataBoundConstructor;
  */
 public class RepositoryClientParameterValue extends StringParameterValue {
 
+	private static final String PREFIX = "repoclient_";
+
 	private final String groupid;
 	private final String artifactid;
 	private final String pattern;
@@ -43,10 +45,14 @@ public class RepositoryClientParameterValue extends StringParameterValue {
 				repo.getPassword(), pattern);
 		StringBuffer sb = new StringBuffer();
 		for (String file : files) {
-			sb.append(file);
-			sb.append(',');
+			if (file.matches(pattern)) {
+				if (sb.length() > 0) {
+					sb.append(',');
+				}
+				sb.append(file);
+			}
 		}
-		final String urls = sb.toString();
+		final String urllist = sb.toString();
 		return new BuildWrapper() {
 			/**
 			 * This method just makes the build fail for various reasons.
@@ -58,19 +64,30 @@ public class RepositoryClientParameterValue extends StringParameterValue {
 				return new Environment() {
 					@Override
 					public void buildEnvVars(Map<String, String> env) {
-						// TODO: get "repoclient.urls parameter, concat URLs
-						env.put("repoclient_" + groupid + "." + artifactid
+						String allurls = env.get(PREFIX + "urls");
+						if (allurls == null) {
+							allurls = "";
+						}
+						if (urllist != null) {
+							if (!allurls.isEmpty()) {
+								allurls += ",";
+							}
+							allurls += urllist;
+						}
+						env.put(PREFIX + "urls", allurls);
+
+						env.put(PREFIX + groupid + "." + artifactid
 								+ "_repoName", getName());
-						env.put("repoclient_" + groupid + "." + artifactid
+						env.put(PREFIX + groupid + "." + artifactid
 								+ "_artifactid", artifactid);
-						env.put("repoclient_" + groupid + "." + artifactid
+						env.put(PREFIX + groupid + "." + artifactid
 								+ "_groupid", groupid);
-						env.put("repoclient_" + groupid + "." + artifactid
+						env.put(PREFIX + groupid + "." + artifactid
 								+ "_pattern", pattern);
-						env.put("repoclient_" + groupid + "." + artifactid
+						env.put(PREFIX + groupid + "." + artifactid
 								+ "_version", value);
-						env.put("repoclient_" + groupid + "." + artifactid
-								+ "_urls", urls);
+						env.put(PREFIX + groupid + "." + artifactid
+								+ "_urls", urllist);
 					}
 				};
 			}
