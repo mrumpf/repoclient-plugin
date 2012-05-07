@@ -1,17 +1,19 @@
-task deploy << {
-    println 'Hello world!'
+defaultTasks 'deploy'
 
+void downloadFile(String url) { 
+    println "Downloading " + url
+    ant.get(src: url, dest: buildDir, verbose:true, username: System.properties['maven.repository.username'], password: System.properties['maven.repository.password']) 
+} 
+
+task deploy << {
     def env = System.getenv()
     env.each{
       println it
     } 
 
-    def repoclient_urls = env.get('repoclient_urls')
+    def repoclient_urls = env.get('repoclient_urls').split(",")
     repoclient_urls.each{
-      println it
+      downloadFile(it)
     }
 }
 
-// task downloadFile { 
-//    ant.get(src: '<url>', dest: buildDir, verbose:true)  // any Gradle equivalent? 
-//} 

@@ -38,6 +38,15 @@ public class RepositoryClientParameterValue extends StringParameterValue {
 		System.err.println("this=" + this);
 	}
 
+	private String removeTrailingComma(String urllist) {
+		String result = urllist;
+		if (urllist.length() >= 1 && urllist.endsWith(",")) {
+			result = removeTrailingComma(urllist.substring(0,
+					urllist.length() - 1));
+		}
+		return result;
+	}
+
 	@Override
 	public BuildWrapper createBuildWrapper(AbstractBuild<?, ?> build) {
 		List<String> files = MavenRepositoryClient.getFiles(repo.getBaseurl(),
@@ -52,9 +61,7 @@ public class RepositoryClientParameterValue extends StringParameterValue {
 				sb.append(file);
 			}
 		}
-		// remove a trailing comma
-		final String urllist = (sb.lastIndexOf(",") == (sb.length() - 1) ? sb
-				.substring(0, sb.length() - 1) : sb.toString());
+		final String urllist = sb.toString();
 
 		return new BuildWrapper() {
 			/**
@@ -77,7 +84,7 @@ public class RepositoryClientParameterValue extends StringParameterValue {
 							}
 							allurls += urllist;
 						}
-						env.put(PREFIX + "urls", allurls);
+						env.put(PREFIX + "urls", removeTrailingComma(allurls));
 
 						env.put(PREFIX + groupid + "." + artifactid
 								+ "_repoName", getName());
@@ -90,7 +97,7 @@ public class RepositoryClientParameterValue extends StringParameterValue {
 						env.put(PREFIX + groupid + "." + artifactid
 								+ "_version", value);
 						env.put(PREFIX + groupid + "." + artifactid + "_urls",
-								urllist);
+								removeTrailingComma(urllist));
 					}
 				};
 			}
