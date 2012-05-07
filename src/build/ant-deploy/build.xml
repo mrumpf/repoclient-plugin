@@ -1,0 +1,29 @@
+<project name="test-deploy" basedir="." default="deploy">
+
+	<property environment="env" />
+	<property file="${basedir}/config/${user.name}.properties" />
+
+	<target name="deploy">
+		<echoproperties />
+		<taskdef resource="net/sf/antcontrib/antlib.xml">
+			<classpath>
+				<pathelement location="lib/ant-contrib/ant-contrib.jar" />
+			</classpath>
+		</taskdef>
+		<foreach list="${env.repoclient_urls}" delimiter="," target="process" param="url.id" />
+	</target>
+
+	<target name="process">
+		<echo message="Downloading ${url.id}..." />
+		<mkdir dir="${basedir}/build" />
+		<antcall target="download-with-credentials" />
+		<antcall target="download-without-credentials" />
+	</target>
+
+	<target name="download-with-credentials" if="maven.repository.user">
+		<get src="${url.id}" dest="${basedir}/build" username="${maven.repository.user}" password="${maven.repository.password}" />
+	</target>
+	<target name="download-without-credentials" unless="maven.repository.user">
+		<get src="${url.id}" dest="${basedir}/build" />
+	</target>
+</project>

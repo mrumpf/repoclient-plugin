@@ -12,6 +12,15 @@ DONE 8. Pass multiple parameters to the script
    c1.pattern=*.zip
    a1=1.6
    a1.pattern=*.jar
+DONE 9. Write an Ant script that downloads the files:
+      <get dest="${destdir}">
+        <url url="@{url}"/>
+        <url url="@{url}.sha1"/>
+        <firstmatchmapper>
+          <globmapper from="@{url}.sha1" to="@{dest}.sha"/>
+          <globmapper from="@{url}" to="@{dest}"/>
+        </firstmatchmapper>
+      </get>
 DONE 10. Help files
 DONE 13. Pass the pattern or the list of files
 DONE 14. Declare config fields as mandatory/optional
@@ -27,15 +36,6 @@ DONE 23. Use the env to add URLs to a single property
 ### TODO
 5. Write test-cases
 6. Add logging
-9. Write an Ant script that downloads the files:
-      <get dest="${destdir}">
-        <url url="@{url}"/>
-        <url url="@{url}.sha1"/>
-        <firstmatchmapper>
-          <globmapper from="@{url}.sha1" to="@{dest}.sha"/>
-          <globmapper from="@{url}" to="@{dest}"/>
-        </firstmatchmapper>
-      </get>
 11. Write documentation
 12. Use Gradle instead of Ant!?
 19. Add Version sorter class:
@@ -49,3 +49,4 @@ DONE 23. Use the env to add URLs to a single property
 22. Validation of 2 fields does not work:
      groupId + artifactId
     How to get this fixed?
+24. Support Apache Download Folders (Artifactory, Apache SVN, ...)

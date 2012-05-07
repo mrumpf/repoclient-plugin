@@ -16,12 +16,12 @@ customer FTP server for example.
 ###############################################################################
 
 The current implementation works with a Nexus repository only, as only there
-you get an easy parsable response when you specify a mime-type application/xml.
+you get an easy parseable response when you specify a mime-type application/xml.
 Artifactory always returns a HTML page where you are forced to parse the href
-attributtes.
+attributes.
 
 ###############################################################################
-### USER INTERFACE ###
+### USER INTERFACE                                                          ###
 ###############################################################################
 
 ### Global Configuration ###
@@ -58,11 +58,19 @@ Define multiple Maven repositories that can be accessed by the Jenkins instance:
 ### Schedule Build ###
 
 1. Pass the selection, i.e. a list of artifacts to the Ant script that will be triggered
-  -Dartifacts=https://www.mycompany.com/maven/com/company/product/component1/abc-1.0.0.zip,
-              https://www.mycompany.com/maven/com/company/product/component1/abc-1.0.0-source.zip,
-              https://www.mycompany.com/maven/com/company/product/component1/abc-1.0.0-doc.zip
-2. The ant script iterates over the list, downloads them from the Maven repository and transfers the files to the project specific destination
+  -Drepoclient_urls=https://www.mycompany.com/maven/com/company/product/component1/abc-1.0.0.zip,
+                    https://www.mycompany.com/maven/com/company/product/component1/abc-1.0.0-source.zip,
+                    https://www.mycompany.com/maven/com/company/product/component1/abc-1.0.0-doc.zip
+2. The ant/gradle script iterates over the list, downloads them from the Maven
+   repository and transfers the files to the project specific destination
 
 ###############################################################################
 ### IMPLEMENTATION                                                          ###
 ###############################################################################
+
+The HTTP/HTTPS request functionality has been implemented with Apache HTTPClient
+only. A Nexus repository returns a clean XML structure when the mime-type
+"application/xml" is used. The result is parsed with JAXB, which means that
+Java 6 is the minimum requirement. For all other Maven repositories, like
+Artifactory or a simple Apache web-based folder view, a regex parsing algorithm
+is used to extract the HTTP URLs from the HTML folder view.
