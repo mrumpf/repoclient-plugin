@@ -52,7 +52,10 @@ public class RepositoryClientParameterValue extends StringParameterValue {
 				sb.append(file);
 			}
 		}
-		final String urllist = sb.toString();
+		// remove a trailing comma
+		final String urllist = (sb.lastIndexOf(",") == (sb.length() - 1) ? sb
+				.substring(0, sb.length() - 1) : sb.toString());
+
 		return new BuildWrapper() {
 			/**
 			 * This method just makes the build fail for various reasons.
@@ -86,8 +89,8 @@ public class RepositoryClientParameterValue extends StringParameterValue {
 								+ "_pattern", pattern);
 						env.put(PREFIX + groupid + "." + artifactid
 								+ "_version", value);
-						env.put(PREFIX + groupid + "." + artifactid
-								+ "_urls", urllist);
+						env.put(PREFIX + groupid + "." + artifactid + "_urls",
+								urllist);
 					}
 				};
 			}

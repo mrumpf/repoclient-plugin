@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.jenkins-ci.plugins</groupId>
 		<artifactId>plugin</artifactId>
-		<version>1.460</version>
+		<version>1.462</version>
 	</parent>
 	<artifactId>repoclient</artifactId>
 	<name>Maven Repository Client Plugin</name>
