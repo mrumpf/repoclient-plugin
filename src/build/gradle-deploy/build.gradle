@@ -2,15 +2,15 @@ defaultTasks 'deploy'
 
 void downloadFile(String url) { 
     println "Downloading " + url
-    ant.get(src: url, dest: buildDir, verbose:true, username: System.properties['maven.repository.username'], password: System.properties['maven.repository.password']) 
+    if (System.properties['maven.repository.username'] != null) {
+        ant.get(src: url, dest: buildDir, verbose:true, username: System.properties['maven.repository.username'], password: System.properties['maven.repository.password'])
+    } else {
+        ant.get(src: url, dest: buildDir, verbose:true)
+    } 
 } 
 
 task deploy << {
     def env = System.getenv()
-    env.each{
-      println it
-    } 
-
     def repoclient_urls = env.get('repoclient_urls').split(",")
     repoclient_urls.each{
       downloadFile(it)
