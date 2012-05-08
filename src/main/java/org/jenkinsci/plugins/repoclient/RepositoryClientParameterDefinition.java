@@ -141,11 +141,18 @@ public class RepositoryClientParameterDefinition extends
 		@Override
 		public boolean configure(StaplerRequest req, JSONObject formData) {
 			if (formData.has("repo")) {
-				repos.replaceBy(JSONArray.toList(formData.getJSONArray("repo"),
-						Repository.class));
+				if (formData.isArray()) {
+					repos.replaceBy(JSONArray.toList(
+							formData.getJSONArray("repo"), Repository.class));
+				} else {
+					repos.replaceBy((Repository) JSONObject.toBean(
+							formData.getJSONObject("repo"), Repository.class));
+				}
 			} else {
 				repos.clear();
 			}
+			System.err.println("repos=" + repos);
+
 			save();
 			return true;
 		}
@@ -156,8 +163,7 @@ public class RepositoryClientParameterDefinition extends
 			FormValidation result = FormValidation.ok();
 			if (groupid == null || groupid.isEmpty()) {
 				result = FormValidation.error(Messages.EmptyGroupId());
-			}
-			else {
+			} else {
 				result = checkPath(artifactid, groupid, reponame);
 			}
 			return result;
@@ -170,8 +176,7 @@ public class RepositoryClientParameterDefinition extends
 			FormValidation result = FormValidation.ok();
 			if (artifactid == null || artifactid.isEmpty()) {
 				result = FormValidation.error(Messages.EmptyArtifactId());
-			}
-			else {
+			} else {
 				result = checkPath(artifactid, groupid, reponame);
 			}
 			return result;
@@ -181,8 +186,10 @@ public class RepositoryClientParameterDefinition extends
 				String reponame) {
 			FormValidation result = FormValidation.ok();
 			Repository r = getRepo(reponame);
-			String url = MavenRepositoryClient.concatUrl(r.getBaseurl(), groupid, artifactid);
-			if (!MavenRepositoryClient.testConnection(url, r.getUsername(), r.getPassword())) {
+			String url = MavenRepositoryClient.concatUrl(r.getBaseurl(),
+					groupid, artifactid);
+			if (!MavenRepositoryClient.testConnection(url, r.getUsername(),
+					r.getPassword())) {
 				result = FormValidation.error(Messages.EmptyArtifactId() + url);
 			}
 			return result;
