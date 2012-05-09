@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.jenkinsci.plugins.repoclient.client.MavenRepositoryClient;
 import org.kohsuke.stapler.DataBoundConstructor;
 
@@ -19,6 +20,9 @@ import org.kohsuke.stapler.DataBoundConstructor;
  * 
  */
 public class RepositoryClientParameterValue extends StringParameterValue {
+
+	private static final Logger logger = Logger
+			.getLogger(RepositoryClientParameterValue.class);
 
 	private static final String PREFIX = "repoclient_";
 
@@ -35,7 +39,6 @@ public class RepositoryClientParameterValue extends StringParameterValue {
 		this.artifactid = artifactid;
 		this.pattern = pattern;
 		this.repo = repo;
-		System.err.println("this=" + this);
 	}
 
 	private String removeTrailingComma(String urllist) {
@@ -49,16 +52,19 @@ public class RepositoryClientParameterValue extends StringParameterValue {
 
 	@Override
 	public BuildWrapper createBuildWrapper(AbstractBuild<?, ?> build) {
-		List<String> files = MavenRepositoryClient.getFiles(repo.getBaseurl(),
-				groupid, artifactid, value, repo.getUsername(),
-				repo.getPassword(), pattern);
+		String url = MavenRepositoryClient.concatUrl(repo.getBaseurl(),
+				groupid, artifactid, value);
+		List<String> files = MavenRepositoryClient.getFiles(url,
+				repo.getUsername(), repo.getPassword(), pattern);
 		StringBuffer sb = new StringBuffer();
 		for (String file : files) {
 			if (file.matches(pattern)) {
+				logger.debug("File '" + file + "' matches pattern '" + pattern
+						+ "'");
 				if (sb.length() > 0) {
 					sb.append(',');
 				}
-				sb.append(file);
+				sb.append(url + file);
 			}
 		}
 		final String urllist = sb.toString();
@@ -74,30 +80,23 @@ public class RepositoryClientParameterValue extends StringParameterValue {
 				return new Environment() {
 					@Override
 					public void buildEnvVars(Map<String, String> env) {
-						String allurls = env.get(PREFIX + "urls");
-						if (allurls == null) {
-							allurls = "";
-						}
-						if (urllist != null) {
-							if (!allurls.isEmpty()) {
-								allurls += ",";
-							}
-							allurls += urllist;
-						}
-						env.put(PREFIX + "urls", removeTrailingComma(allurls));
-
-						env.put(PREFIX + groupid + "." + artifactid
-								+ "_repoName", getName());
-						env.put(PREFIX + groupid + "." + artifactid
-								+ "_artifactid", artifactid);
-						env.put(PREFIX + groupid + "." + artifactid
-								+ "_groupid", groupid);
-						env.put(PREFIX + groupid + "." + artifactid
-								+ "_pattern", pattern);
-						env.put(PREFIX + groupid + "." + artifactid
-								+ "_version", value);
-						env.put(PREFIX + groupid + "." + artifactid + "_urls",
+						env.put(PREFIX + "_reponame_" + groupid + "."
+								+ artifactid, getName());
+						env.put(PREFIX + "_artifactid_" + groupid + "."
+								+ artifactid, artifactid);
+						env.put(PREFIX + "_groupid_" + groupid + "."
+								+ artifactid, groupid);
+						env.put(PREFIX + "_pattern_" + groupid + "."
+								+ artifactid, pattern);
+						env.put(PREFIX + "_version_" + groupid + "."
+								+ artifactid, value);
+						env.put(PREFIX + "_urls_" + groupid + "." + artifactid,
 								removeTrailingComma(urllist));
+						env.put(PREFIX + "_user_" + groupid + "." + artifactid,
+								repo.getUsername());
+						env.put(PREFIX + "_password_" + groupid + "."
+								+ artifactid, repo.getPassword());
+						logger.debug("Setting environment: " + env);
 					}
 				};
 			}

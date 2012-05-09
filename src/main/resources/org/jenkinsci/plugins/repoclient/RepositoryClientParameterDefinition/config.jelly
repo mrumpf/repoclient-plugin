@@ -9,16 +9,16 @@
       </j:forEach>
     </select>
   </f:entry>
-	<f:entry title="${%GroupId}" help="/help/parameter/client-groupId.html">
+	<f:entry title="${%GroupId}" help="/plugin/repoclient/help-groupid.html">
 		<f:textbox field="groupid" value="${instance.groupid}" />
 	</f:entry>
-    <f:entry title="${%ArtifactId}" help="/help/parameter/client-artifactId.html">
+    <f:entry title="${%ArtifactId}" help="/plugin/repoclient/help-artifactid.html">
         <f:textbox field="artifactid" value="${instance.artifactid}" />
     </f:entry>
-    <f:entry title="${%Pattern}" help="/help/parameter/client-pattern.html">
+    <f:entry title="${%Pattern}" help="/plugin/repoclient/help-pattern.html">
         <f:textbox field="pattern" value="${instance.pattern}" />
     </f:entry>
-    <f:entry title="${%Description}" help="/help/parameter/description.html">
+    <f:entry title="${%Description}" help="/plugin/repoclient/help-description.html">
         <f:textarea field="description" value="${instance.description}" />
     </f:entry>
 </j:jelly>

@@ -3,7 +3,8 @@ package org.jenkinsci.plugins.repoclient;
 import hudson.util.Secret;
 
 /**
- * 
+ * This class represents a repository in the global configuration.
+ *
  * @author mrumpf
  *
  */
@@ -19,6 +20,14 @@ public class Repository {
 	public Repository() {
 	}
 
+	/**
+	 * Constructor.
+	 * 
+	 * @param reponame the repository name
+	 * @param baseurl the base URL
+	 * @param username the username or null if not necessary
+	 * @param password the password or null if no username is given
+	 */
 	public Repository(String reponame, String baseurl, String username,
 			String password) {
 		this.reponame = reponame;

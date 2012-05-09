@@ -15,11 +15,18 @@ customer FTP server for example.
 ### PREREQUISITES                                                           ###
 ###############################################################################
 
-The current implementation has been tested with Nexus and Artifactory.
-Nexus returns a XML folder structure when you specify a mime-type application/xml.
+The current implementation has been tested with Nexus, Artifactory and
+Subversion as "poor man's" repository.
+Nexus returns a XML folder structure when you specify a mime-type 
+application/xml.
 Artifactory returns a simple HTML page when using the "list" URL:
-http://server/artifactory/list/reponame. The <a> tags are then parsed from the
-HTML file.
+http://server/artifactory/list/reponame. The href="" attributes are parsed from
+the HTML file and filtered against a list of standard exclude patterns, 
+like ".." or "http://subversion.tigris.org" for example.
+
+NOTE: You should make sure to mask the password, specified for a repository so
+that the password does not appear plan-text in the console log:
+https://wiki.jenkins-ci.org/display/JENKINS/Mask+Passwords+Plugin
 
 ###############################################################################
 ### USER INTERFACE                                                          ###
@@ -30,7 +37,7 @@ HTML file.
 Define multiple Maven repositories that can be accessed by the Jenkins instance:
 1. Name: Main
 2. Server Base URL: https://www.mycompany.com/maven/
-3. Username: user  (global read-only user)
+3. Username: user  (e.g. a global read-only user)
 4. Password: password
 
 ### Job Configuration ###
@@ -54,24 +61,39 @@ Define multiple Maven repositories that can be accessed by the Jenkins instance:
   * version2
   * ...
   * versionN
-2. The user selects one entry for which the files are passed to the build as parameters
+2. The user selects one entry for which the files are passed to the
+   build as parameters
 
 ### Schedule Build ###
 
-1. Pass the selection, i.e. a list of artifacts to the Ant script that will be triggered
-  -Drepoclient_urls=https://www.mycompany.com/maven/com/company/product/component1/abc-1.0.0.zip,
-                    https://www.mycompany.com/maven/com/company/product/component1/abc-1.0.0-source.zip,
-                    https://www.mycompany.com/maven/com/company/product/component1/abc-1.0.0-doc.zip
-2. The ant/gradle script iterates over the list, downloads them from the Maven
-   repository and transfers the files to the project specific destination
+1. The ant/gradle script iterates over a list of properties, downloads the
+   artifacts them from the Maven repository and performs arbitrary actions on 
+   the downloaded artifacts.
+
+###############################################################################
+### PROPERTIES                                                              ###
+###############################################################################
+
+The following properties are passed to the build script via the environment:
+* repoclient_reponame_<GROUPID>.<ARTIFACTID> - the name of the repository, as 
+     defined in the Jenkins global configuration
+* repoclient_artifactid_<GROUPID>.<ARTIFACTID> - the artifact id 
+* repoclient_groupid_<GROUPID>.<ARTIFACTID> -  the group id
+* repoclient_pattern_<GROUPID>.<ARTIFACTID> - the regex pattern used to select 
+     the files
+* repoclient_version_<GROUPID>.<ARTIFACTID> - the version number 
+* repoclient_urls_<GROUPID>.<ARTIFACTID> - the URLs of the selected files
+* repoclient_user_<GROUPID>.<ARTIFACTID> - the name of the repository user
+* repoclient_password_<GROUPID>.<ARTIFACTID> - the password of the repository
+     user
 
 ###############################################################################
 ### IMPLEMENTATION                                                          ###
 ###############################################################################
 
 The HTTP/HTTPS request functionality has been implemented with Apache HTTPClient
-only. A Nexus repository returns a clean XML structure when the mime-type
+only. A Nexus repository returns a XML structure when the mime-type
 "application/xml" is used. The result is parsed with JAXB, which means that
 Java 6 is the minimum requirement. For all other Maven repositories, like
 Artifactory or a simple HTML folder view, a regex parsing algorithm
-is used to extract the HTTP URLs from the HTML code.
+is used to extract the HTTP URLs from the HTML code: href=[\n\r ]*\"([^\"]*)\"

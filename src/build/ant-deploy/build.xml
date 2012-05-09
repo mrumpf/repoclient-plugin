@@ -10,6 +10,10 @@
 				<pathelement location="lib/ant-contrib/ant-contrib.jar" />
 			</classpath>
 		</taskdef>
+
+		<propertyselector property="url.list" delimiter="," match="repoclient_[^.]*_(.*)$" select="\1" casesensitive="false" />
+		<echo message="${url.list}"/>
+
 		<foreach list="${env.repoclient_urls}" delimiter="," target="process" param="url.id" />
 	</target>
 
@@ -20,10 +24,10 @@
 		<antcall target="download-without-credentials" />
 	</target>
 
-	<target name="download-with-credentials" if="maven.repository.user">
-		<get src="${url.id}" dest="${basedir}/build" username="${maven.repository.user}" password="${maven.repository.password}" />
+	<target name="download-with-credentials" if="env.maven.repository.user">
+		<get src="${url.id}" dest="${basedir}/build" username="${env.maven.repository.user}" password="${env.maven.repository.password}" />
 	</target>
-	<target name="download-without-credentials" unless="maven.repository.user">
+	<target name="download-without-credentials" unless="env.maven.repository.user">
 		<get src="${url.id}" dest="${basedir}/build" />
 	</target>
 </project>
