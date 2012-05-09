@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -30,6 +32,8 @@ import org.jenkinsci.plugins.repoclient.RepositoryClientParameterDefinition;
 public class MavenRepositoryClient {
 	private static final String FILES_TO_IGNORE = "^maven-metadata.*$|^archetype-catalog.*$";
 	private static final String NONE = "";
+	private static final Pattern PATTERN = Pattern.compile(
+			"href=[\n\r ]*\"([^\"]*)\"", Pattern.CASE_INSENSITIVE);
 
 	private static final Logger logger = Logger
 			.getLogger(RepositoryClientParameterDefinition.class);
@@ -45,10 +49,10 @@ public class MavenRepositoryClient {
 
 		logger.debug("Response " + responseBody);
 
-		Content c = unmarshal(responseBody);
-
 		List<String> versions = new ArrayList<String>();
 		versions.add(NONE);
+
+		Content c = unmarshal(responseBody);
 		if (c != null) {
 			for (ContentItem ci : c.getContentItems()) {
 				String ver = ci.getText();
@@ -56,7 +60,28 @@ public class MavenRepositoryClient {
 					versions.add(ver);
 				}
 			}
+		} else {
+			logger.warn("Falling back to HTML parsing as the Nexus XML structure was not found");
+			if (responseBody != null) {
+				Matcher matcher = PATTERN.matcher(responseBody);
+				while (matcher.find()) {
+					String ver = matcher.group(1);
+					// remove trailing slash
+					if (ver.endsWith("/")) {
+						ver = ver.substring(0, ver.length() - 1);
+					}
+					// extract the version only
+					if (ver.toLowerCase().startsWith("http")) {
+						int idx = ver.lastIndexOf('/');
+						ver = ver.substring(0, idx);
+					}
+					if (!"..".equals(ver) && ver.toLowerCase().indexOf("subversion") == -1) {
+						versions.add(ver);
+					}
+				}
+			}
 		}
+
 		return versions;
 	}
 
@@ -126,6 +151,7 @@ public class MavenRepositoryClient {
 		try {
 			pc = ProxyConfiguration.load();
 			if (pc != null) {
+				logger.info("Using proxy " + pc.name + ":" + pc.port);
 				client.getHostConfiguration().setProxy(pc.name, pc.port);
 			}
 		} catch (IOException e) {
@@ -174,15 +200,19 @@ public class MavenRepositoryClient {
 
 	private static Content unmarshal(String xml) {
 		Content content = null;
-		try {
-			StringReader sr = new StringReader(xml);
-			JAXBContext jaxbContext = JAXBContext.newInstance(Content.class);
+		if (xml != null) {
+			try {
+				StringReader sr = new StringReader(xml);
+				JAXBContext jaxbContext = JAXBContext
+						.newInstance(Content.class);
 
-			Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-			content = (Content) jaxbUnmarshaller.unmarshal(sr);
+				Unmarshaller jaxbUnmarshaller = jaxbContext
+						.createUnmarshaller();
+				content = (Content) jaxbUnmarshaller.unmarshal(sr);
 
-		} catch (JAXBException e) {
-			logger.error("Unmarshaling of XML data failed", e);
+			} catch (JAXBException e) {
+				logger.error("Unmarshaling of XML data failed", e);
+			}
 		}
 		return content;
 	}
@@ -219,6 +249,8 @@ public class MavenRepositoryClient {
 			logger.error("Http error connecting to '" + url + "'", he);
 		} catch (IOException ioe) {
 			logger.error("Unable to connect to '" + url + "'", ioe);
+		} catch (Exception e) {
+			logger.error("Unknown exception while connecting to '" + url + "'", e);
 		} finally {
 			if (method != null) {
 				method.releaseConnection();

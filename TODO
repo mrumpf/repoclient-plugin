@@ -22,7 +22,6 @@
 22. Validation of 2 fields does not work:
      groupId + artifactId
     The validation of the two fields must be combined.
-24. Support Apache Download Folders (Artifactory, Apache SVN, ...)
 
 ###############################################################################
 ### DONE                                                                    ###
@@ -62,3 +61,5 @@ DONE 20. Allow in the index.jelly file to not select a version, in case
    you do not want to release one of multiple versions
 DONE 23. Use the env to add URLs to a single property
     repoclient.urls=....
+DONE 24. Support Apache Download Folders (Artifactory, Apache SVN, ...)
+    

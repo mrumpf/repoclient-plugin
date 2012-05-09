@@ -15,6 +15,7 @@ import java.util.regex.PatternSyntaxException;
 import javax.servlet.ServletException;
 
 import net.sf.json.JSONArray;
+import net.sf.json.JSONException;
 import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
@@ -141,17 +142,16 @@ public class RepositoryClientParameterDefinition extends
 		@Override
 		public boolean configure(StaplerRequest req, JSONObject formData) {
 			if (formData.has("repo")) {
-				if (formData.isArray()) {
+				try {
 					repos.replaceBy(JSONArray.toList(
 							formData.getJSONArray("repo"), Repository.class));
-				} else {
+				} catch (JSONException ex) {
 					repos.replaceBy((Repository) JSONObject.toBean(
 							formData.getJSONObject("repo"), Repository.class));
 				}
 			} else {
 				repos.clear();
 			}
-			System.err.println("repos=" + repos);
 
 			save();
 			return true;

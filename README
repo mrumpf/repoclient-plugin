@@ -15,10 +15,11 @@ customer FTP server for example.
 ### PREREQUISITES                                                           ###
 ###############################################################################
 
-The current implementation works with a Nexus repository only, as only there
-you get an easy parseable response when you specify a mime-type application/xml.
-Artifactory always returns a HTML page where you are forced to parse the href
-attributes.
+The current implementation has been tested with Nexus and Artifactory.
+Nexus returns a XML folder structure when you specify a mime-type application/xml.
+Artifactory returns a simple HTML page when using the "list" URL:
+http://server/artifactory/list/reponame. The <a> tags are then parsed from the
+HTML file.
 
 ###############################################################################
 ### USER INTERFACE                                                          ###
@@ -72,5 +73,5 @@ The HTTP/HTTPS request functionality has been implemented with Apache HTTPClient
 only. A Nexus repository returns a clean XML structure when the mime-type
 "application/xml" is used. The result is parsed with JAXB, which means that
 Java 6 is the minimum requirement. For all other Maven repositories, like
-Artifactory or a simple Apache web-based folder view, a regex parsing algorithm
-is used to extract the HTTP URLs from the HTML folder view.
+Artifactory or a simple HTML folder view, a regex parsing algorithm
+is used to extract the HTTP URLs from the HTML code.
