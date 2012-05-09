@@ -24,9 +24,24 @@ http://server/artifactory/list/reponame. The href="" attributes are parsed from
 the HTML file and filtered against a list of standard exclude patterns, 
 like ".." or "http://subversion.tigris.org" for example.
 
+### Mask Password ###
+
 NOTE: You should make sure to mask the password, specified for a repository so
 that the password does not appear plan-text in the console log:
 https://wiki.jenkins-ci.org/display/JENKINS/Mask+Passwords+Plugin
+
+### Proxy ###
+
+In case a proxy is required to access a repository then the proxy must be
+configured via the Java parameters and passed as environment properties
+to the build job.
+See the following Wiki for details:
+http://wiki.eclipse.org/Hudson#Accessing_the_Internet_using_Proxy
+
+For example: Invoke Ant -> Java Options
+-Dhttp.proxyHost=proxy.mycompany.com -Dhttp.proxyPort=80 
+-Dhttps.proxyHost=proxy.mycompany.com -Dhttps.proxyPort=80 
+-DhttpnonProxyHosts=*.mycompany.com -DhttpsnonProxyHosts=*.mycompany.com
 
 ###############################################################################
 ### USER INTERFACE                                                          ###

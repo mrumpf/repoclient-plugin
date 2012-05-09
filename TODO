@@ -1,11 +1,10 @@
 ###############################################################################
 ### TODO                                                                    ###
 ###############################################################################
-6. Add logging
 22. Validation of 2 fields does not work:
      groupId + artifactId
     The validation of the two fields must be combined.
-25. Publish the plugin on jenkins-ci.org
+26. Publish the plugin on jenkins-ci.org
  
 ###############################################################################
 ### DONE                                                                    ###
@@ -17,6 +16,7 @@ DONE 2. Use groupId.artifactId as name for the index.jelly label
 DONE 3. Filter other files, not only maven-metadata.*, archetype-catalog.*
 WONTFIX 4. Make sure that the dropdown boxes have the same width
 DONE 5. Write test-cases
+DONE 6. Add logging
 DONE 7. Show a warning when there is no Maven repository defined in the global configuration
 DONE 8. Pass multiple parameters to the script
 DONE 7. Show a warning when there is no Maven repository defined in the global configuration
@@ -62,4 +62,4 @@ DONE 21. Refactor MavenRepositoryClient
 DONE 23. Use the env to add URLs to a single property
     repoclient.urls=....
 DONE 24. Support Apache Download Folders (Artifactory, Apache SVN, ...)
-    
+DONE 25. German error message is shown although the UI is in English

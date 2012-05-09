@@ -24,7 +24,7 @@ public class RepositoryClientParameterValue extends StringParameterValue {
 	private static final Logger logger = Logger
 			.getLogger(RepositoryClientParameterValue.class);
 
-	private static final String PREFIX = "repoclient_";
+	private static final String PREFIX = "repoclient";
 
 	private final String groupid;
 	private final String artifactid;
