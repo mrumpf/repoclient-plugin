@@ -111,7 +111,7 @@ public class MavenRepositoryClient {
 		if (c != null) {
 			for (ContentItem ci : c.getContentItems()) {
 				String file = ci.getText();
-				files.add(baseurl + file);
+				files.add(file);
 			}
 		} else {
 			logger.warn("Falling back to HTML parsing as the Nexus XML structure was not found");

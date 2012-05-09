@@ -13,10 +13,10 @@
 		<mkdir dir="${basedir}/build" />
 
 		<propertyselector property="list" delimiter="," match="repoclient_urls_(.*)$" select="\1" casesensitive="false" />
-		<foreach list="${list}" delimiter="," target="xxx" param="id" />
+		<foreach list="${list}" delimiter="," target="iterate-parameters" param="id" />
 	</target>
 
-	<target name="xxx">
+	<target name="iterate-parameters">
 		<propertycopy name="maven.reponame" from="env.repoclient_reponame_${id}" override="true" />
 		<propertycopy name="maven.urls" from="env.repoclient_urls_${id}" override="true" />
 		<propertycopy name="maven.password" from="env.repoclient_password_${id}" override="true" silent="true" />

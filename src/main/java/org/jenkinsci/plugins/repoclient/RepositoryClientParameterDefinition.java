@@ -258,7 +258,7 @@ public class RepositoryClientParameterDefinition extends
 
 		@Override
 		public String getHelpFile() {
-			return "/client.html";
+			return "/help-parameter.html";
 		}
 	}
 
