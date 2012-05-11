@@ -18,6 +18,11 @@
     The validation of the two fields must be combined.
 26. validate the path (baseurl + groupId + artifactId) in project config
 27. Publish the plugin on jenkins-ci.org
+   * DONE: Wiki page created
+   * DONE: pom.xml 
+   * JIRA component
+   * Request access on jenkins-dev
+   * CI Build on ci.jenkins-ci.org
 
 ###############################################################################
 ### DONE                                                                    ###
