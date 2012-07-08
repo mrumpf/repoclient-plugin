@@ -1,28 +1,12 @@
 ###############################################################################
 ### TODO                                                                    ###
 ###############################################################################
-19. Add Version sorter class:
-    1.2.3.4_suffix
-    1.2.3.4.suffix
-    1.2.3.4
-    1.2.3
-    1.2
-    1
-    1a
-    1.2b
-    1.2.3c
-    1.2.3.4d
-    1.2.3.4d_suffix
 22. Validation of 2 fields does not work:
      groupId + artifactId
     The validation of the two fields must be combined.
 26. validate the path (baseurl + groupId + artifactId) in project config
-27. Publish the plugin on jenkins-ci.org
-   * DONE: Wiki page created
-   * DONE: pom.xml 
-   * JIRA component
-   * Request access on jenkins-dev
-   * CI Build on ci.jenkins-ci.org
+28. Merge the plugin with the already published
+    https://github.com/jenkinsci/repository-connector-plugin
 
 ###############################################################################
 ### DONE                                                                    ###
@@ -62,6 +46,18 @@ DONE 16. I18N
 DONE 17. Use regex pattern to filter the files against the pattern
 DONE 18. Add a license
     1.2.3.4d.suffix
+DONE 19. Add Version sorter class:
+    1.2.3.4_suffix
+    1.2.3.4.suffix
+    1.2.3.4
+    1.2.3
+    1.2
+    1
+    1a
+    1.2b
+    1.2.3c
+    1.2.3.4d
+    1.2.3.4d_suffix
 DONE 20. Allow in the index.jelly file to not select a version, in case
    you do not want to release one of multiple versions
 DONE 21. Refactor MavenRepositoryClient
@@ -69,3 +65,9 @@ DONE 23. Use the env to add URLs to a single property
     repoclient.urls=....
 DONE 24. Support Apache Download Folders (Artifactory, Apache SVN, ...)
 DONE 25. German error message is shown although the UI is in English
+WONTFIX 27. Publish the plugin on jenkins-ci.org
+   * DONE: Wiki page created
+   * DONE: pom.xml 
+   * JIRA component
+   * Request access on jenkins-dev
+   * CI Build on ci.jenkins-ci.org

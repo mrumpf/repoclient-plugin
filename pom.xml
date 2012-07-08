@@ -4,7 +4,7 @@
     <parent>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>plugin</artifactId>
-      <version>1.463</version>
+      <version>1.464</version>
     </parent>
     <artifactId>repoclient</artifactId>
     <version>1.0.0</version>

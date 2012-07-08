@@ -7,6 +7,7 @@ import hudson.model.ParameterDefinition;
 import hudson.model.StringParameterValue;
 import hudson.util.CopyOnWriteList;
 import hudson.util.FormValidation;
+import org.jenkinsci.plugins.repoclient.Messages;
 
 import java.io.IOException;
 import java.util.List;
@@ -20,6 +21,7 @@ import net.sf.json.JSONObject;
 
 import org.apache.log4j.Logger;
 import org.jenkinsci.plugins.repoclient.client.MavenRepositoryClient;
+import org.jenkinsci.plugins.repoclient.client.Version;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;

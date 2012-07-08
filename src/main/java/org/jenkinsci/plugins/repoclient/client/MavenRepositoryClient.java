@@ -5,6 +5,7 @@ import hudson.ProxyConfiguration;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -66,22 +67,40 @@ public class MavenRepositoryClient {
 
 		logger.debug("Response " + responseBody);
 
-		List<String> versions = new ArrayList<String>();
-		versions.add(NONE);
-
+		List<String> items = new ArrayList<String>();
 		Content c = unmarshal(responseBody);
 		if (c != null) {
 			for (ContentItem ci : c.getContentItems()) {
 				String ver = ci.getText();
 				if (!ver.matches(FILES_TO_IGNORE)) {
-					versions.add(ver);
+					items.add(ver);
 				}
 			}
 		} else {
 			logger.warn("Falling back to HTML parsing as the Nexus XML structure was not found");
-			parseHtml(responseBody, versions);
+			parseHtml(responseBody, items);
 		}
-		return versions;
+
+		return sortVersions(items);
+	}
+
+	private static List<String> sortVersions(List<String> items) {
+		List<Version> versions = new ArrayList<Version>();
+		for (String item : items) {
+			try {
+				versions.add(new Version(item));
+			} catch (Exception ex) {
+				logger.warn("Could not parse version: " + item, ex);
+			}
+		}
+		Collections.sort(versions);
+		Collections.reverse(versions);
+		List<String> versionStrings = new ArrayList<String>();
+		versionStrings.add(NONE);
+		for (Version ver : versions) {
+			versionStrings.add(ver.toString());
+		}
+		return versionStrings;
 	}
 
 	/**
