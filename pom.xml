@@ -7,7 +7,7 @@
       <version>1.464</version>
     </parent>
     <artifactId>repoclient</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <packaging>hpi</packaging>
     <name>Maven Repository Client Plugin</name>
     <description>Provides access to artifacts in a Maven repository</description>
