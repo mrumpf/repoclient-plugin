@@ -76,7 +76,7 @@ public class Version implements Serializable, Comparable<Version> {
 				version = original.substring(0, v.length());
 			}
 			else {
-				version = original;
+				version = v;
 			}
 		}
 
