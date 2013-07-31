@@ -121,6 +121,11 @@ public class VersionTest {
 		Version v = new Version("1.2.3.4-qualifier");
 		checkVersion(v, "1", "2", "3", "4", "qualifier");
 	}
+	@Test
+	public void testQualifierDashNumeric() {
+		Version v = new Version("1.2.3-4");
+		checkVersion(v, "1", "2", "3","0", "4");
+	}
 
 	@Test
 	public void testQualifierHash() {
@@ -178,6 +183,18 @@ public class VersionTest {
 	public void testCompareLess() {
 		Version v1 = new Version("0");
 		Version v2 = new Version("1");
+		assertTrue(v1.compareTo(v2) == -1);
+	}
+	@Test
+	public void testCompareQualifier() {
+		Version v1 = new Version("1.1.2-r2");
+		Version v2 = new Version("1.1.2-r3");
+		assertTrue(v1.compareTo(v2) == -1);
+	}
+	@Test
+	public void testCompareQualifierNumeric() {
+		Version v1 = new Version("1.1.2-r9");
+		Version v2 = new Version("1.1.2-r10");
 		assertTrue(v1.compareTo(v2) == -1);
 	}
 

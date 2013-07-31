@@ -1,7 +1,8 @@
 package org.jenkinsci.plugins.repoclient.client;
 
+import com.eekboom.utils.Strings;
+
 import java.io.Serializable;
-import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -102,9 +103,11 @@ public class Version implements Serializable, Comparable<Version> {
 		int idx = -1;
 		char[] chars = ver.toCharArray();
 		int j = 0;
+        char delimiter = '.';
 		for (char c : chars) {
 			if ((c < '0' || '9' < c)) {
 				idx = j;
+                delimiter = c;
 				break;
 			}
 			j++;
@@ -115,7 +118,7 @@ public class Version implements Serializable, Comparable<Version> {
 			String fragment = ver.substring(0, idx);
 			try {
 				Integer.valueOf(fragment);
-				if (idx < ver.length()) {
+				if (idx < ver.length() && delimiter == '.') {
 					String check = stripVersion(ver.substring(idx + 1));
 					if (check != null) {
 						version = fragment + "." + check;
@@ -269,9 +272,8 @@ public class Version implements Serializable, Comparable<Version> {
 			}
 		}
 		if (result == 0) {
-			result = Collator.getInstance().compare(qualifier,
-					ver.getQualifier());
-		}
+            result = Strings.compareNaturalAscii(qualifier, ver.getQualifier());
+        }
 		return result;
 	}
 }
