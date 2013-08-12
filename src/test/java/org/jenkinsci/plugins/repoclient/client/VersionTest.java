@@ -107,7 +107,7 @@ public class VersionTest {
 	@Test
 	public void testTrailingDot() {
 		Version v = new Version("1.2.3.");
-		checkVersion(v, "1", "2", "3", "0", null);
+		checkVersion(v, "1", "2", "3", "0", "");
 	}
 
 	@Test
@@ -266,7 +266,7 @@ public class VersionTest {
 
 	private void checkVersion(Version v, String major, String minor,
 			String bugfix, String hotfix) {
-		checkVersion(v, major, minor, bugfix, hotfix, null);
+		checkVersion(v, major, minor, bugfix, hotfix, "");
 	}
 
 	private void checkVersion(Version v, String major, String minor,
