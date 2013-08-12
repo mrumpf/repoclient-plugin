@@ -111,6 +111,12 @@ public class VersionTest {
 	}
 
 	@Test
+	public void testBuildnumberDash() {
+		Version v = new Version("1.2.3.4-5");
+		checkVersion(v, "1", "2", "3", "4");
+	}
+
+	@Test
 	public void testBlanksInside() {
 		Version v = new Version(" 1. 2. 3. 4#qualifier");
 		checkVersion(v, "1", "2", "3", "4", "qualifier");
@@ -220,8 +226,36 @@ public class VersionTest {
 		versions.add(new Version("2.2.0.99.96"));
 		versions.add(new Version("2.2.0.99.104"));
 		versions.add(new Version("2.2.0.99.110"));
+		versions.add(new Version("3.0.1.0-12"));
+		versions.add(new Version("3.0.1.0-14"));
 		List<Version> versionsSorted = new ArrayList<Version>();
 		versionsSorted.addAll(versions);
+		Collections.sort(versionsSorted);
+		for (int i = 0; i < versions.size(); i++) {
+			assertEquals("sorted version is not the same as unsorted (sorted: "
+					+ versionsSorted + ", versions: " + versions + ")",
+					versions.get(i), versionsSorted.get(i));
+		}
+	}
+
+	@Test
+	public void testSortUnsorted() {
+		List<Version> versions = new ArrayList<Version>();
+		versions.add(new Version("0.quali"));
+		versions.add(new Version("0.qualifier"));
+		versions.add(new Version("1.1.qual"));
+		versions.add(new Version("1.2.qual"));
+		versions.add(new Version("1.2.3.4.yyy.xxx.qualifie"));
+		versions.add(new Version("1.2.3.4.yyy.xxx.qualifier"));
+		versions.add(new Version("2.2.0.99.96"));
+		versions.add(new Version("2.2.0.99.104"));
+		versions.add(new Version("2.2.0.99.110"));
+		versions.add(new Version("3.0.1.0-12"));
+		versions.add(new Version("3.0.1.0-14"));
+		List<Version> versionsSorted = new ArrayList<Version>();
+		versionsSorted.addAll(versions);
+		Collections.shuffle(versionsSorted);
+
 		Collections.sort(versionsSorted);
 		for (int i = 0; i < versions.size(); i++) {
 			assertEquals("sorted version is not the same as unsorted (sorted: "
