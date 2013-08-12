@@ -199,12 +199,12 @@ public class Version implements Serializable, Comparable<Version> {
 	}
 
 	/**
-	 * Returns the qualifier or null if no qualifier is present.
+	 * Returns the qualifier or an empty String if no qualifier is present.
 	 * 
-	 * @return the qualifier or null if no qualifier is present
+	 * @return the qualifier or an empty String if no qualifier is present
 	 */
 	public String getQualifier() {
-		return qualifier;
+		return qualifier == null ? "" : qualifier;
 	}
 
 	/**
