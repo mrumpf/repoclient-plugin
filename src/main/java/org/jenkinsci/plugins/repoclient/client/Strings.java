@@ -21,7 +21,7 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.eekboom.utils;
+package org.jenkinsci.plugins.repoclient.client;
 
 import java.text.Collator;
 import java.util.Comparator;

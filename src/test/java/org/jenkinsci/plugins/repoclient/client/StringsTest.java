@@ -1,4 +1,4 @@
-package com.eekboom.utils;
+package org.jenkinsci.plugins.repoclient.client;
 import junit.framework.TestCase;
 
 import java.text.Collator;

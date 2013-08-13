@@ -1,7 +1,5 @@
 package org.jenkinsci.plugins.repoclient.client;
 
-import com.eekboom.utils.Strings;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
