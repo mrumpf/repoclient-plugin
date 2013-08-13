@@ -113,7 +113,7 @@ public class VersionTest {
 	@Test
 	public void testBuildnumberDash() {
 		Version v = new Version("1.2.3.4-5");
-		checkVersion(v, "1", "2", "3", "4");
+		checkVersion(v, "1", "2", "3", "4","5");
 	}
 
 	@Test
