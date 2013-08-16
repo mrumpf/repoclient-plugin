@@ -167,6 +167,22 @@ public class VersionTest {
 	}
 
 	@Test
+	public void testCompareNullPointer() {
+		Version v1 = new Version("1.2.3.4.foo");
+		Version v2 = new Version("1.2.3.4");
+		assertEquals(1, v1.compareTo(v2));
+		assertEquals(-1, v2.compareTo(v1));
+		assertEquals(0, v2.compareTo(v2));
+		assertEquals(0, v1.compareTo(v1));
+	}
+
+	@Test
+	public void testCompareNullPointer2() {
+		Version v1 = new Version("1");
+		assertEquals(0, v1.compareTo(v1));
+	}
+
+	@Test
 	public void testCompareMinor() {
 		Version v1 = new Version("1.0.0.0.yyy.xxx.qualifier");
 		Version v2 = new Version("1.2.3.4.yyy.xxx.qualifier");
@@ -204,6 +220,18 @@ public class VersionTest {
 	@Test
 	public void testEqual() {
 		Version v = new Version("1.2.3.4.yyy.xxx.qualifier");
+		assertEquals("Versions are not equal", v, v);
+	}
+
+	@Test
+	public void testEqual2() {
+		Version v = new Version("1.2.3.4.yyy.xxx");
+		assertEquals("Versions are not equal", v, v);
+	}
+
+	@Test
+	public void testEqual3() {
+		Version v = new Version("1.2.3");
 		assertEquals("Versions are not equal", v, v);
 	}
 
