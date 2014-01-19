@@ -35,7 +35,7 @@ public class MavenRepositoryClient {
 	private static final String FILES_TO_IGNORE = "^maven-metadata.*$|^archetype-catalog.*$";
 	private static final String NONE = "";
 	private static final Pattern PATTERN = Pattern.compile(
-			"href=[\n\r ]*\"([^\"]*)\"", Pattern.CASE_INSENSITIVE);
+			"<a\\b[^>]*href=[\n\r ]*\"([^\"]*)\"", Pattern.CASE_INSENSITIVE);
 
 	private static final Logger logger = Logger
 			.getLogger(RepositoryClientParameterDefinition.class);
@@ -306,10 +306,11 @@ public class MavenRepositoryClient {
 				// extract the version only
 				if (match.toLowerCase().startsWith("http")) {
 					int idx = match.lastIndexOf('/');
-					match = match.substring(0, idx);
+					match = match.substring(idx + 1);
 				}
 				if (!"..".equals(match)
-						&& !match.toLowerCase().startsWith("http")) {
+						&& !match.toLowerCase().startsWith("http")
+                        && !match.matches(FILES_TO_IGNORE)) {
 					matches.add(match);
 				}
 			}
