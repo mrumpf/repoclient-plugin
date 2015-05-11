@@ -1,0 +1,5 @@
+eclipse.preferences.version=1
+extraProperties=
+projectKey=org.jenkins-ci.plugins\:repoclient
+serverUrl=https\://sbs.t-systems.com/sonarqube
+version=2
