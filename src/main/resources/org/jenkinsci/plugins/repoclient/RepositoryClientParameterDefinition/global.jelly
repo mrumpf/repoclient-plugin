@@ -1,5 +1,5 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
-  <f:section title="Maven Repository Client">
+  <f:section title="Maven Repository Client (DEPRECATED)">
     <f:entry title="${%Repositories}"
       description="${%Maven Repositories}">
       <f:repeatable var="repo" items="${descriptor.repos}">
