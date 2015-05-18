@@ -269,7 +269,7 @@ public class Version implements Serializable, Comparable<Version> {
 			}
 		}
 		if (result == 0) {
-			result = Collator.getInstance().compare(qualifier,
+			result = Collator.getInstance().compare(getQualifier(),
 					ver.getQualifier());
 		}
 		return result;
